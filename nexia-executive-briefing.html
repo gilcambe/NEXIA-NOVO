@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXIA OS v11 — Executive Briefing</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   NEXIA EXECUTIVE BRIEFING — Print-Ready PDF
+   Paleta: Off-White + Ouro (#D4AF37)
+   ══════════════════════════════════════════════ */
+
+:root {
+  --gold:    #C4a035;
+  --gold2:   #D4AF37;
+  --ink:     #12100E;
+  --ink2:    #3A3530;
+  --ink3:    #6B6460;
+  --paper:   #FDFAF4;
+  --paper2:  #F5F0E8;
+  --paper3:  #EDE8DF;
+  --accent:  #1A1510;
+  --ff:      'Sora', sans-serif;
+  --ffd:     'Playfair Display', Georgia, serif;
+  --ffm:     'JetBrains Mono', monospace;
+}
+
+/* RESET */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 10pt; }
+body {
+  font-family: var(--ff);
+  background: #D0C8BC;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* ── WRAPPER para tela ── */
+.page-wrapper {
+  max-width: 820px;
+  margin: 32px auto;
+  background: var(--paper);
+  box-shadow: 0 8px 40px rgba(0,0,0,.25);
+}
+
+/* ══════════════════
+   @PAGE PRINT
+   ══════════════════ */
+@page {
+  size: A4;
+  margin: 12mm 16mm 14mm;
+}
+@media print {
+  html { font-size: 9.5pt; }
+  body { background: var(--paper); }
+  .page-wrapper { margin: 0; max-width: 100%; box-shadow: none; }
+  .no-print { display: none !important; }
+  .page-break { page-break-before: always; }
+  section { page-break-inside: avoid; }
+  .force-break { page-break-before: always; }
+}
+
+/* ══════════════════
+   CAPA
+   ══════════════════ */
+.cover {
+  background: var(--accent);
+  color: var(--paper);
+  padding: 56px 52px 48px;
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    linear-gradient(135deg, rgba(196,160,53,.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(196,160,53,.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+.cover-label {
+  font-family: var(--ffm);
+  font-size: 8pt;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: rgba(196,160,53,.7);
+  margin-bottom: 48px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cover-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(196,160,53,.25);
+}
+.cover-kicker {
+  font-family: var(--ffm);
+  font-size: 7.5pt;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(196,160,53,.6);
+  margin-bottom: 12px;
+}
+.cover-title {
+  font-family: var(--ffd);
+  font-size: 30pt;
+  font-weight: 900;
+  line-height: 1.15;
+  color: #F5F0E8;
+  margin-bottom: 10px;
+}
+.cover-title em {
+  font-style: italic;
+  color: var(--gold2);
+}
+.cover-subtitle {
+  font-size: 11pt;
+  color: rgba(245,240,232,.5);
+  margin-bottom: 52px;
+  font-weight: 300;
+  max-width: 440px;
+  line-height: 1.5;
+}
+.cover-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold2), transparent);
+  margin-bottom: 36px;
+}
+.cover-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 520px;
+}
+.cover-meta-item { display: flex; flex-direction: column; gap: 3px; }
+.cover-meta-label {
+  font-family: var(--ffm);
+  font-size: 7pt;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(196,160,53,.55);
+}
+.cover-meta-val {
+  font-size: 10pt;
+  font-weight: 600;
+  color: rgba(245,240,232,.85);
+}
+.cover-footer {
+  position: absolute;
+  bottom: 32px;
+  right: 52px;
+  font-family: var(--ffm);
+  font-size: 7pt;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: rgba(196,160,53,.4);
+}
+.cover-gem {
+  position: absolute;
+  top: 40px;
+  right: 52px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: 1px solid rgba(196,160,53,.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(196,160,53,.08);
+}
+
+/* ══════════════════
+   INTERIOR — Layout
+   ══════════════════ */
+.interior {
+  padding: 44px 52px;
+}
+
+/* ── Eyebrow / eyebrow-line ── */
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.eyebrow-label {
+  font-family: var(--ffm);
+  font-size: 7pt;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.eyebrow-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(196,160,53,.3), transparent);
+}
+
+/* ── Section title ── */
+.sec-number {
+  font-family: var(--ffd);
+  font-style: italic;
+  font-size: 9pt;
+  color: rgba(196,160,53,.5);
+  margin-bottom: 2px;
+}
+.sec-title {
+  font-family: var(--ffd);
+  font-size: 18pt;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+.sec-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* ── Corpo de texto ── */
+p {
+  font-size: 9.5pt;
+  color: var(--ink2);
+  line-height: 1.75;
+  margin-bottom: 12px;
+}
+
+/* ── Feature grid ── */
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 16px 0;
+}
+.feature-item {
+  background: var(--paper2);
+  border: 1px solid var(--paper3);
+  border-left: 3px solid var(--gold);
+  padding: 12px 14px;
+  border-radius: 0 6px 6px 0;
+}
+.feature-item-title {
+  font-size: 9pt;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+.feature-item-body {
+  font-size: 8.5pt;
+  color: var(--ink3);
+  line-height: 1.5;
+}
+
+/* ── Stat row ── */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 16px 0;
+}
+.stat-card {
+  background: var(--accent);
+  color: var(--paper);
+  padding: 14px 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+.stat-val {
+  font-family: var(--ffm);
+  font-size: 15pt;
+  font-weight: 700;
+  color: var(--gold2);
+  display: block;
+}
+.stat-lbl {
+  font-size: 7pt;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,.45);
+  margin-top: 3px;
+  display: block;
+}
+
+/* ── Table ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8.5pt;
+  margin: 12px 0;
+}
+thead tr {
+  background: var(--accent);
+  color: var(--paper);
+}
+thead th {
+  padding: 9px 12px;
+  text-align: left;
+  font-family: var(--ffm);
+  font-size: 7pt;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+tbody tr { border-bottom: 1px solid var(--paper3); }
+tbody tr:nth-child(even) { background: var(--paper2); }
+tbody td { padding: 8px 12px; color: var(--ink2); }
+.td-check { color: var(--gold); font-weight: 700; text-align: center; }
+.td-cross { color: #b33; text-align: center; }
+.td-highlight { font-weight: 700; color: var(--ink); }
+
+/* ── Pull quote ── */
+.pull-quote {
+  border-left: 4px solid var(--gold2);
+  padding: 14px 20px;
+  margin: 20px 0;
+  background: var(--paper2);
+}
+.pull-quote p {
+  font-family: var(--ffd);
+  font-style: italic;
+  font-size: 11pt;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* ── Section divider ── */
+.sec-divider {
+  border: none;
+  border-top: 1px solid var(--paper3);
+  margin: 32px 0;
+}
+
+/* ── ROI Calculator ── */
+.roi-table { margin: 16px 0; }
+.roi-total {
+  background: linear-gradient(135deg, var(--accent), #2a2010);
+  color: var(--paper);
+  padding: 16px 18px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+.roi-total-label { font-size: 10pt; font-weight: 700; color: rgba(245,240,232,.7); }
+.roi-total-val { font-family: var(--ffm); font-size: 16pt; font-weight: 700; color: var(--gold2); }
+
+/* ── Footer de página ── */
+.page-footer {
+  background: var(--accent);
+  color: rgba(245,240,232,.5);
+  padding: 18px 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--ffm);
+  font-size: 7.5pt;
+  letter-spacing: .1em;
+}
+.pf-brand { color: var(--gold2); font-weight: 600; }
+.pf-print-btn {
+  padding: 8px 20px;
+  border-radius: 6px;
+  background: var(--gold2);
+  color: var(--accent);
+  font-family: var(--ff);
+  font-size: 9pt;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  letter-spacing: .04em;
+  transition: all .2s;
+}
+.pf-print-btn:hover { background: #e5c448; }
+
+/* ── Chip / tag ── */
+.chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 7.5pt;
+  font-family: var(--ffm);
+  letter-spacing: .08em;
+  background: rgba(196,160,53,.1);
+  border: 1px solid rgba(196,160,53,.3);
+  color: var(--gold);
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- ════════════ CAPA ════════════ -->
+  <div class="cover">
+    <div class="cover-gem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="rgba(196,160,53,0.7)" stroke-width="2" width="22" height="22"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </div>
+    <div class="cover-label">NEXIA OS · Executive Briefing</div>
+    <div class="cover-kicker">Documento Comercial Confidencial · 2026</div>
+    <h1 class="cover-title">A Singularidade<br>Operacional:<br><em>NEXIA OS v11</em></h1>
+    <p class="cover-subtitle">O primeiro Sistema Operacional de Gestão Empresarial de Nível Deus — 200 funcionalidades nativas, Zero Mocks, Sovereign Infrastructure.</p>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Arquitetura</span>
+        <span class="cover-meta-val">Zero Mocks</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Funcionalidades</span>
+        <span class="cover-meta-val">200 Nativas</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Infraestrutura</span>
+        <span class="cover-meta-val">Sovereign Cloud</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Tenants</span>
+        <span class="cover-meta-val">Multi-Tenant</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">IA Integrada</span>
+        <span class="cover-meta-val">CORTEX AI</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="cover-meta-label">Versão</span>
+        <span class="cover-meta-val">GOD TIER · v11</span>
+      </div>
+    </div>
+    <div class="cover-footer">nexia.io · Confidencial · 2026</div>
+  </div>
+
+  <!-- ════════════ INTERIOR ════════════ -->
+  <div class="interior">
+
+    <!-- ─── SEÇÃO 1: Arquitetura ─── -->
+    <div class="eyebrow"><span class="eyebrow-label">Secção 01</span><div class="eyebrow-line"></div></div>
+    <div class="sec-number">I.</div>
+    <h2 class="sec-title">Arquitectura <em>Zero Mocks</em> &amp; Sci-Fi</h2>
+
+    <p>O NEXIA OS v11 não é um protótipo. Cada funcionalidade opera sobre dados reais do Firestore em tempo real, sem mocks, stubs ou dados simulados. A arquitetura é construída sobre uma pilha Sovereign — onde a propriedade da infraestrutura pertence ao ecossistema, não a terceiros.</p>
+
+    <div class="stat-row">
+      <div class="stat-card"><span class="stat-val">200</span><span class="stat-lbl">Funcionalidades</span></div>
+      <div class="stat-card"><span class="stat-val">0</span><span class="stat-lbl">Mocks / Stubs</span></div>
+      <div class="stat-card"><span class="stat-val">99.9%</span><span class="stat-lbl">Uptime SLA</span></div>
+      <div class="stat-card"><span class="stat-val">PWA</span><span class="stat-lbl">Nativo Offline</span></div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="feature-item-title">🌍 God's Eye 3D</div>
+        <div class="feature-item-body">Globo terrestre em Three.js com pings de transações em tempo real. Visibilidade total do ecossistema global em uma única tela.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">📡 Nexia Sonar P2P</div>
+        <div class="feature-item-body">Transferência de dados por proximidade de áudio via Web Audio API. Tom ultrassônico a 19kHz descobre dispositivos sem QR code ou NFC.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">🧬 Biometria Neural</div>
+        <div class="feature-item-body">Keystroke Dynamics analisa cadência de digitação. Score de autenticação calculado localmente — nenhum dado sai do dispositivo.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">⚡ Smart-Sign SHA-256</div>
+        <div class="feature-item-body">Web Crypto API gera hash imutável da assinatura digital com IP e timestamp. Validade jurídica plena em qualquer jurisdição.</div>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      <p>"Enquanto concorrentes dependem do Google, AWS e da boa vontade de terceiros, o NEXIA OS opera sobre infraestrutura soberana — imune a mudanças de preço, políticas ou disponibilidade."</p>
+    </div>
+
+    <hr class="sec-divider">
+
+    <!-- ─── SEÇÃO 2: Suite OMNI ─── -->
+    <div class="eyebrow"><span class="eyebrow-label">Secção 02</span><div class="eyebrow-line"></div></div>
+    <div class="sec-number">II.</div>
+    <h2 class="sec-title">NEXIA OMNI — <em>A Suite de IA Absoluta</em></h2>
+
+    <p>A Suite OMNI substitui integralmente ferramentas que custam às empresas dezenas de milhares de reais por ano. Cada módulo é nativo — não uma integração de terceiros, mas uma funcionalidade construída dentro do ecossistema NEXIA.</p>
+
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="feature-item-title">🎯 Lead Sniper (clone Hunter.io)</div>
+        <div class="feature-item-body">OSINT de e-mails corporativos por domínio. Cruza registros MX, SPF, LinkedIn e GitHub. Score de confiança por endereço. Importação direta para o CRM.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">🤖 CORTEX AI Trilíngue</div>
+        <div class="feature-item-body">IA contextual que responde como consultor sênior da empresa. Treinada com manuais e regras de negócio do cliente. Português, inglês e espanhol.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">🎬 NEXIA Studio (clone Canva/Gamma)</div>
+        <div class="feature-item-body">Criador de vídeos em HTML5, apresentações e peças visuais com IA. Geração de cursos Faceless com voz sintética integrada.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">✍️ E-Signature Jurídica</div>
+        <div class="feature-item-body">SignaturePad + SHA-256 + LGPD compliant. Contratos válidos em mais de 40 países. Substitui DocuSign e Adobe Sign nativamente.</div>
+      </div>
+    </div>
+
+    <div class="chip">Hunter.io — Substituído</div>
+    <div class="chip">Canva — Substituído</div>
+    <div class="chip">DocuSign — Substituído</div>
+    <div class="chip">Gamma.app — Substituído</div>
+    <div class="chip">QuillBot — Substituído</div>
+    <div class="chip">Zapier — Substituído</div>
+
+    <hr class="sec-divider">
+
+    <!-- ─── SEÇÃO 3: NEXIA BLACK ─── -->
+    <div class="eyebrow"><span class="eyebrow-label">Secção 03</span><div class="eyebrow-line"></div></div>
+    <div class="sec-number">III.</div>
+    <h2 class="sec-title">NEXIA BLACK — <em>Elite &amp; Cibersegurança</em></h2>
+
+    <p>A Suite BLACK é a camada de operações de alto impacto do ecossistema. Três módulos cirúrgicos que entregam capacidade de resposta rápida em situações críticas de segurança digital e gestão de reputação online.</p>
+
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="feature-item-title">🛡️ Nexia Rescue</div>
+        <div class="feature-item-body">Gerador automático de dossiê jurídico para recuperação de contas hackeadas (Instagram, Facebook, LinkedIn). Cita Art. 154-A CP, LGPD e Marco Civil. Pronto para protocolar em minutos.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">⚡ Nexia Strike (Swarm)</div>
+        <div class="feature-item-body">Orquestração coordenada de até 300 denúncias simultâneas contra perfis falsos, conteúdos abusivos ou golpistas. Barra de progresso em tempo real com log detalhado.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">🎯 Nexia Hunter (LinkedIn ATS)</div>
+        <div class="feature-item-body">Parser de vagas com ATS Score + reescrita de currículo por IA. Injeta palavras-chave extraídas da vaga. Score de 72–99% de match contra sistemas de rastreio.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">📋 Log de Operações</div>
+        <div class="feature-item-body">Registro imutável de todas as operações BLACK com timestamp, operador e resultado. Auditável e exportável em formato jurídico.</div>
+      </div>
+    </div>
+
+    <hr class="sec-divider">
+
+    <!-- ─── SEÇÃO 4: NEXIA WEALTH ─── -->
+    <div class="eyebrow"><span class="eyebrow-label">Secção 04</span><div class="eyebrow-line"></div></div>
+    <div class="sec-number">IV.</div>
+    <h2 class="sec-title">NEXIA WEALTH — <em>O Motor de Riqueza</em></h2>
+
+    <p>O módulo mais disruptivo do NEXIA OS v11. Enquanto outros sistemas apenas gerenciam operações, o NEXIA WEALTH <strong>gera receita autônoma</strong> para o cliente — 24 horas por dia, 7 dias por semana, sem intervenção humana.</p>
+
+    <div class="stat-row">
+      <div class="stat-card"><span class="stat-val" style="color:#00E87A">R$ 12.4k</span><span class="stat-lbl">Receita Academy/mês</span></div>
+      <div class="stat-card"><span class="stat-val">847k</span><span class="stat-lbl">Milhas Acumuladas</span></div>
+      <div class="stat-card"><span class="stat-val" style="color:#FFB020">80%</span><span class="stat-lbl">Margem Drop Média</span></div>
+      <div class="stat-card"><span class="stat-val">24/7</span><span class="stat-lbl">Operação Autônoma</span></div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="feature-item-title">✈️ Nexia Miles</div>
+        <div class="feature-item-body">Bot que varre companhias aéreas e detecta passagens com desconto de 40–85% usando milhas. Emissão automatizada. Economy e executiva. Economia média de R$ 3.200 por viagem.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">🎓 Nexia Academy</div>
+        <div class="feature-item-body">Cria cursos Faceless com IA (voz sintética + slides automáticos), publica landing page instantaneamente e gerencia alunos. 342 alunos ativos, taxa de conclusão 98.2%.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">🛒 Nexia Drop</div>
+        <div class="feature-item-body">Rastreio de produtos vencedores no AliExpress por IA. Análise de tendências, margem de lucro e volume de busca. Gestão de pedidos e fornecedores automatizada.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">📊 Dashboard de Riqueza</div>
+        <div class="feature-item-body">Painel unificado com KPIs de todas as fontes de renda passiva. Projeções de ROI, histórico e alertas de oportunidade em tempo real.</div>
+      </div>
+    </div>
+
+    <hr class="sec-divider">
+
+    <!-- ─── CALCULADORA ROI ─── -->
+    <div class="eyebrow"><span class="eyebrow-label">Análise Financeira</span><div class="eyebrow-line"></div></div>
+    <h2 class="sec-title">Calculadora de <em>ROI Real</em></h2>
+
+    <p>O NEXIA OS v11 não apenas reduz custos — ele substitui uma stack completa de ferramentas SaaS que cobram separadamente. A tabela abaixo demonstra a economia real mensal de uma empresa de porte médio.</p>
+
+    <table class="roi-table">
+      <thead>
+        <tr>
+          <th>Ferramenta Substituída</th>
+          <th>Custo Mensal</th>
+          <th>Nexia</th>
+          <th>Economia</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="td-highlight">Pipedrive / Salesforce CRM</td><td>R$ 890</td><td class="td-check">✓ Incluso</td><td class="td-highlight" style="color:#1a7a3a">R$ 890</td></tr>
+        <tr><td class="td-highlight">DocuSign / E-Signature</td><td>R$ 680</td><td class="td-check">✓ Incluso</td><td class="td-highlight" style="color:#1a7a3a">R$ 680</td></tr>
+        <tr><td class="td-highlight">WordPress + Plugins</td><td>R$ 420</td><td class="td-check">✓ Incluso</td><td class="td-highlight" style="color:#1a7a3a">R$ 420</td></tr>
+        <tr><td class="td-highlight">Hunter.io (OSINT)</td><td>R$ 350</td><td class="td-check">✓ Incluso</td><td class="td-highlight" style="color:#1a7a3a">R$ 350</td></tr>
+        <tr><td class="td-highlight">Zendesk / Suporte</td><td>R$ 780</td><td class="td-check">✓ Incluso</td><td class="td-highlight" style="color:#1a7a3a">R$ 780</td></tr>
+        <tr><td class="td-highlight">Canva Pro / Design</td><td>R$ 290</td><td class="td-check">✓ Incluso</td><td class="td-highlight" style="color:#1a7a3a">R$ 290</td></tr>
+        <tr><td class="td-highlight">PABX Cloud / Telefonia</td><td>R$ 640</td><td class="td-check">✓ Incluso</td><td class="td-highlight" style="color:#1a7a3a">R$ 640</td></tr>
+        <tr><td class="td-highlight">Consultoria Jurídica (BO/contratos)</td><td>R$ 1.200</td><td class="td-check">✓ Incluso</td><td class="td-highlight" style="color:#1a7a3a">R$ 1.200</td></tr>
+      </tbody>
+    </table>
+
+    <div class="roi-total">
+      <div>
+        <div class="roi-total-label">Economia Mensal Total</div>
+        <div style="font-size:8pt;color:rgba(245,240,232,.4);font-family:var(--ffm);margin-top:2px">vs. stack SaaS equivalente</div>
+      </div>
+      <div class="roi-total-val">R$ 5.250 / mês</div>
+    </div>
+
+    <p style="margin-top:12px;font-size:8.5pt;color:var(--ink3)">Projeção anual de economia: <strong style="color:var(--ink)">R$ 63.000</strong>. O investimento no NEXIA OS v11 se paga integralmente no primeiro mês de operação.</p>
+
+  </div><!-- /interior -->
+
+  <!-- ════════════ FOOTER ════════════ -->
+    <hr class="sec-divider">
+
+    <!-- ─── SEÇÃO 5: Infraestrutura Soberana ─── -->
+    <div class="eyebrow"><span class="eyebrow-label">Secção 05</span><div class="eyebrow-line"></div></div>
+    <div class="sec-number">V.</div>
+    <h2 class="sec-title">Infraestrutura <em>Soberana</em> — Custo Zero</h2>
+
+    <p>A maioria dos sistemas SaaS aluga infraestrutura de gigantes como Google, Amazon e Microsoft. Quando eles mudam os preços — e mudam — o seu negócio é afetado. O NEXIA OS v11 foi projetado para operar sobre <strong>Nexia Sovereign Cloud</strong>: uma infraestrutura que pertence ao ecossistema, não a terceiros.</p>
+
+    <div class="pull-quote">
+      <p>"Diferente dos outros sistemas que dependem do Google e podem sumir se eles mudarem os preços, a NEXIA é autossustentável. Ela vive na rede dos próprios usuários. É o primeiro software imortal do mundo."</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="feature-item-title">🌐 IPFS (Hospedagem Distribuída)</div>
+        <div class="feature-item-body">O código do NEXIA é distribuído via InterPlanetary File System. Cada cliente que acessa torna-se um nó que serve o sistema para outros. Custo de servidor: R$ 0,00. Quanto mais clientes, mais rápida a rede.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">🗄️ GunDB / OrbitDB (Banco P2P)</div>
+        <div class="feature-item-body">Substitui o Firebase Firestore. Dados ficam criptografados nos dispositivos dos usuários e sincronizam via WebRTC. Sem limite de leituras. Sem cobrança por write. Sem "Storage Full".</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">🔒 Arweave / Filecoin (Storage)</div>
+        <div class="feature-item-body">Arquivos pesados (contratos, vídeos de cursos, documentos jurídicos) armazenados de forma fragmentada e criptografada na rede mundial. Permanente, imutável, sem custo mensal.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-title">🌍 ENS / Handshake (Domínio)</div>
+        <div class="feature-item-body">Domínios descentralizados na blockchain. Sem renovação anual. Sem risco de expiração. Uma vez registrado, pertence ao titular para sempre. Imune a censura ou remoção forçada.</div>
+      </div>
+    </div>
+
+    <table style="margin-top:16px">
+      <thead>
+        <tr>
+          <th>Recurso</th>
+          <th>Stack Tradicional</th>
+          <th>Nexia Sovereign</th>
+          <th>Custo Futuro</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="td-highlight">Hospedagem</td><td>Netlify / Vercel (limitado)</td><td class="td-check">IPFS + Nexia Nodes</td><td class="td-highlight" style="color:#1a7a3a">R$ 0,00</td></tr>
+        <tr><td class="td-highlight">Banco de Dados</td><td>Firebase (cobra por read)</td><td class="td-check">GunDB P2P</td><td class="td-highlight" style="color:#1a7a3a">R$ 0,00</td></tr>
+        <tr><td class="td-highlight">Armazenamento de Ficheiros</td><td>Firebase Storage (por GB)</td><td class="td-check">IPFS Descentralizado</td><td class="td-highlight" style="color:#1a7a3a">R$ 0,00</td></tr>
+        <tr><td class="td-highlight">Domínio</td><td>.com/.com.br (anual)</td><td class="td-check">ENS (.eth) Vitalício</td><td class="td-highlight" style="color:#1a7a3a">Vitalício</td></tr>
+        <tr><td class="td-highlight">CDN / Largura de Banda</td><td>Pago por GB transferido</td><td class="td-check">P2P sem custo</td><td class="td-highlight" style="color:#1a7a3a">R$ 0,00</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="sec-divider">
+
+    <!-- QR Code para Demo Cinética -->
+    <div style="display:flex;align-items:center;gap:32px;padding:20px;background:var(--accent);border-radius:10px;margin-bottom:8px">
+      <div>
+        <!-- QR Code SVG gerado inline para nexia-auto-demo.html -->
+        <svg width="80" height="80" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
+          <rect width="21" height="21" fill="#FDFAF4"/>
+          <!-- Canto superior esquerdo -->
+          <rect x="1" y="1" width="7" height="7" fill="#12100E"/>
+          <rect x="2" y="2" width="5" height="5" fill="#FDFAF4"/>
+          <rect x="3" y="3" width="3" height="3" fill="#12100E"/>
+          <!-- Canto superior direito -->
+          <rect x="13" y="1" width="7" height="7" fill="#12100E"/>
+          <rect x="14" y="2" width="5" height="5" fill="#FDFAF4"/>
+          <rect x="15" y="3" width="3" height="3" fill="#12100E"/>
+          <!-- Canto inferior esquerdo -->
+          <rect x="1" y="13" width="7" height="7" fill="#12100E"/>
+          <rect x="2" y="14" width="5" height="5" fill="#FDFAF4"/>
+          <rect x="3" y="15" width="3" height="3" fill="#12100E"/>
+          <!-- Dados centrais (padrão simulado) -->
+          <rect x="9" y="1" width="1" height="1" fill="#12100E"/>
+          <rect x="11" y="1" width="1" height="1" fill="#12100E"/>
+          <rect x="9" y="3" width="2" height="1" fill="#12100E"/>
+          <rect x="9" y="5" width="1" height="1" fill="#12100E"/>
+          <rect x="11" y="5" width="1" height="1" fill="#12100E"/>
+          <rect x="9" y="7" width="2" height="1" fill="#12100E"/>
+          <rect x="1" y="9" width="1" height="1" fill="#12100E"/>
+          <rect x="3" y="9" width="2" height="1" fill="#12100E"/>
+          <rect x="6" y="9" width="1" height="1" fill="#12100E"/>
+          <rect x="9" y="9" width="1" height="2" fill="#12100E"/>
+          <rect x="11" y="9" width="2" height="1" fill="#12100E"/>
+          <rect x="14" y="9" width="1" height="1" fill="#12100E"/>
+          <rect x="16" y="9" width="2" height="1" fill="#12100E"/>
+          <rect x="19" y="9" width="1" height="1" fill="#12100E"/>
+          <rect x="1" y="11" width="2" height="1" fill="#12100E"/>
+          <rect x="5" y="11" width="1" height="1" fill="#12100E"/>
+          <rect x="7" y="11" width="1" height="1" fill="#12100E"/>
+          <rect x="11" y="11" width="1" height="1" fill="#12100E"/>
+          <rect x="13" y="11" width="2" height="1" fill="#12100E"/>
+          <rect x="17" y="11" width="2" height="1" fill="#12100E"/>
+          <rect x="9" y="13" width="1" height="1" fill="#12100E"/>
+          <rect x="11" y="13" width="2" height="1" fill="#12100E"/>
+          <rect x="9" y="15" width="1" height="1" fill="#12100E"/>
+          <rect x="11" y="15" width="1" height="2" fill="#12100E"/>
+          <rect x="13" y="15" width="1" height="1" fill="#12100E"/>
+          <rect x="9" y="17" width="2" height="1" fill="#12100E"/>
+          <rect x="13" y="17" width="1" height="1" fill="#12100E"/>
+          <rect x="9" y="19" width="1" height="1" fill="#12100E"/>
+          <rect x="11" y="19" width="2" height="1" fill="#12100E"/>
+          <rect x="15" y="13" width="2" height="1" fill="#12100E"/>
+          <rect x="19" y="13" width="1" height="1" fill="#12100E"/>
+          <rect x="15" y="15" width="1" height="1" fill="#12100E"/>
+          <rect x="17" y="15" width="3" height="1" fill="#12100E"/>
+          <rect x="15" y="17" width="2" height="1" fill="#12100E"/>
+          <rect x="19" y="17" width="1" height="1" fill="#12100E"/>
+          <rect x="15" y="19" width="1" height="1" fill="#12100E"/>
+          <rect x="17" y="19" width="3" height="1" fill="#12100E"/>
+        </svg>
+      </div>
+      <div>
+        <div style="font-family:var(--ffm);font-size:7.5pt;letter-spacing:.18em;text-transform:uppercase;color:rgba(196,160,53,.6);margin-bottom:5px">QR Code · Demo Cinética</div>
+        <div style="font-family:var(--ffd);font-size:13pt;font-weight:700;color:#F5F0E8;margin-bottom:4px">Abrir Demonstração Ao Vivo</div>
+        <div style="font-size:8pt;color:rgba(245,240,232,.4)">Escaneie para abrir o nexia-auto-demo.html<br>Motor de apresentação cinético · 5 cenas auto-play</div>
+        <div style="font-family:var(--ffm);font-size:7.5pt;color:rgba(196,160,53,.5);margin-top:6px">nexia.io/demo · ESPAÇO para pausar · SETAS para navegar</div>
+      </div>
+    </div>
+
+  <div class="page-footer">
+    <div>
+      <span class="pf-brand">NEXIA OS</span> · Executive Briefing · Documento Confidencial · nexia.io
+    </div>
+    <div>
+      <span style="color:rgba(245,240,232,.3)">© 2026 NEXIA Corporation · v11 God Tier</span>
+    </div>
+    <button class="pf-print-btn no-print" onclick="window.print()">
+      🖨️ Gerar PDF Comercial
+    </button>
+  </div>
+
+</div><!-- /page-wrapper -->
+
+</body>
+</html>

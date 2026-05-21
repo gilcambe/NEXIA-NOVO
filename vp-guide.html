@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXIA OS — Portal do Tenant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Sora:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<style>
+:root {
+  --bg:    #07090D;
+  --bg2:   #0C1018;
+  --panel: #0E1320;
+  --brd:   #1C2840;
+  --brd2:  #253555;
+  --text:  #C4D4EE;
+  --text2: #7A90B8;
+  --text3: #3F5070;
+  --white: #EEF4FF;
+  --gold:  #C4955A;
+  --gold2: rgba(196,149,90,0.12);
+  --cyan:  #00E5FF;
+  --cyan2: rgba(0,229,255,0.10);
+  --green: #00E87A;
+  --red:   #FF3D71;
+  --ff:    'Sora', sans-serif;
+  --ffs:   'DM Serif Display', Georgia, serif;
+  --ffm:   'JetBrains Mono', monospace;
+  --ease:  cubic-bezier(0.22,1,0.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--text);font-family:var(--ff);min-height:100vh;-webkit-font-smoothing:antialiased;}
+button{font-family:var(--ff);cursor:pointer;border:none;outline:none;}
+input{font-family:var(--ff);outline:none;}
+
+/* ── INTRO ── */
+#nexia-intro{
+  position:fixed;inset:0;z-index:99999;background:#040608;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  animation:introOut 0.5s ease 1.2s forwards;pointer-events:none;
+}
+.intro-gem{width:52px;height:52px;background:linear-gradient(135deg,#1a1a2e,#16213e 40%,var(--cyan));border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 50px rgba(0,229,255,0.3);position:relative;overflow:hidden;animation:gemIn 0.4s var(--ease) both;}
+.intro-gem::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.18),transparent 55%);}
+.intro-title{font-family:var(--ffs);font-style:italic;font-size:24px;color:var(--white);animation:textIn 0.4s ease 0.2s both;}
+.intro-title span{font-family:var(--ff);font-style:normal;font-weight:700;font-size:13px;color:var(--cyan);margin-left:5px;vertical-align:middle;}
+.intro-sub{font-size:8px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(0,229,255,0.4);margin-top:4px;animation:textIn 0.4s ease 0.3s both;}
+.intro-bar{width:48px;height:2px;background:rgba(255,255,255,0.06);border-radius:1px;overflow:hidden;animation:textIn 0.3s ease 0.35s both;}
+.intro-fill{height:100%;background:linear-gradient(90deg,var(--cyan),#7B5CFA);width:0;animation:barFill 0.7s ease 0.4s forwards;}
+@keyframes introOut{to{opacity:0;}}
+@keyframes gemIn{from{transform:scale(0.5) rotate(-15deg);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes textIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+@keyframes barFill{to{width:100%;}}
+
+/* ── LOGIN ── */
+#login-wrap{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 70% 60% at 30% 40%,rgba(0,229,255,0.04),transparent 70%),
+             radial-gradient(ellipse 50% 40% at 80% 70%,rgba(196,149,90,0.04),transparent 60%);
+}
+.login-box{width:360px;padding:48px 44px;}
+.login-gem{width:44px;height:44px;background:linear-gradient(135deg,#1a1a2e,var(--cyan));border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;position:relative;overflow:hidden;box-shadow:0 2px 24px rgba(0,229,255,0.15);}
+.login-gem::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.18),transparent 55%);}
+.login-title{font-family:var(--ffs);font-style:italic;font-size:1.6rem;color:var(--white);margin-bottom:4px;}
+.login-sub{font-size:8px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--text3);margin-bottom:36px;}
+.l-lbl{display:block;font-size:7.5px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+.l-inp{width:100%;padding:11px 0;background:transparent;border:none;border-bottom:1px solid var(--brd2);font-size:13px;font-weight:300;color:var(--white);margin-bottom:18px;transition:border-color 0.2s;}
+.l-inp:focus{border-bottom-color:var(--cyan);}
+.l-inp::placeholder{color:var(--text3);}
+.l-btn{width:100%;padding:13px;background:var(--cyan);color:#000;font-size:8.5px;font-weight:800;letter-spacing:0.26em;text-transform:uppercase;border-radius:2px;margin-top:4px;transition:opacity 0.2s;}
+.l-btn:hover{opacity:0.85;}
+.l-err{font-size:10px;color:var(--red);text-align:center;margin-top:10px;min-height:16px;}
+.l-hint{font-size:8.5px;color:var(--text3);text-align:center;margin-top:16px;line-height:1.7;}
+.l-hint strong{color:var(--text2);}
+
+/* ── HUB ── */
+#hub-wrap{display:none;min-height:100vh;padding:0;}
+
+/* Header */
+.hub-header{padding:22px 48px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--brd);background:var(--panel);}
+.hub-gem{width:34px;height:34px;background:linear-gradient(135deg,#1a1a2e,var(--cyan));border-radius:9px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0;}
+.hub-gem::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.18),transparent 55%);}
+.hub-brand{font-family:var(--ffs);font-style:italic;font-size:15px;color:var(--white);}
+.hub-brand span{font-family:var(--ff);font-style:normal;font-weight:700;font-size:9px;color:var(--cyan);margin-left:3px;}
+.hub-spacer{flex:1;}
+.hub-user{display:flex;align-items:center;gap:9px;}
+.hub-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#FFB020);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#000;}
+.hub-uname{font-size:11px;font-weight:500;color:var(--white);}
+.hub-urole{font-size:8px;color:var(--text3);}
+.hub-logout{padding:6px 14px;background:rgba(255,61,113,0.08);border:1px solid rgba(255,61,113,0.2);border-radius:4px;font-size:8.5px;font-weight:700;color:var(--red);letter-spacing:0.08em;margin-left:12px;}
+
+/* Main content */
+.hub-main{padding:52px 48px;}
+.hub-eyebrow{font-size:9px;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.hub-title{font-family:var(--ffs);font-style:italic;font-size:2rem;color:var(--white);margin-bottom:8px;}
+.hub-desc{font-size:11px;color:var(--text2);margin-bottom:44px;max-width:460px;line-height:1.7;}
+
+/* Agency cards grid */
+.hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;max-width:900px;}
+
+.agency-card{
+  background:var(--panel);border:1px solid var(--brd);border-radius:14px;
+  padding:28px 28px 24px;cursor:pointer;position:relative;overflow:hidden;
+  transition:border-color 0.25s, transform 0.2s, box-shadow 0.25s;
+}
+.agency-card:hover{border-color:var(--brd2);transform:translateY(-3px);box-shadow:0 20px 60px rgba(0,0,0,0.4);}
+.agency-card.vp:hover{border-color:rgba(196,149,90,0.5);box-shadow:0 20px 60px rgba(196,149,90,0.1);}
+.agency-card.ces:hover{border-color:rgba(0,229,255,0.4);box-shadow:0 20px 60px rgba(0,229,255,0.08);}
+.agency-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-bar,linear-gradient(90deg,var(--gold),#FFB020));}
+
+.card-icon{font-size:28px;margin-bottom:18px;}
+.card-name{font-family:var(--ffs);font-style:italic;font-size:1.25rem;color:var(--white);margin-bottom:4px;}
+.card-id{font-family:var(--ffm);font-size:9px;color:var(--text3);margin-bottom:14px;}
+.card-desc{font-size:10.5px;color:var(--text2);line-height:1.6;margin-bottom:20px;}
+
+.card-stats{display:flex;gap:18px;margin-bottom:22px;padding:12px 14px;background:rgba(255,255,255,0.03);border-radius:7px;}
+.stat-item{flex:1;}
+.stat-val{font-family:var(--ffm);font-size:14px;color:var(--white);font-weight:500;}
+.stat-lbl{font-size:7.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-top:2px;}
+
+.card-btn{
+  width:100%;padding:11px;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+  transition:all 0.15s;
+}
+.card-btn.gold{background:rgba(196,149,90,0.15);border:1px solid rgba(196,149,90,0.35);color:var(--gold);}
+.card-btn.gold:hover{background:rgba(196,149,90,0.25);}
+.card-btn.cyan{background:var(--cyan2);border:1px solid rgba(0,229,255,0.3);color:var(--cyan);}
+.card-btn.cyan:hover{background:rgba(0,229,255,0.18);}
+
+.card-modules{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px;}
+.module-tag{padding:2px 8px;background:rgba(255,255,255,0.05);border:1px solid var(--brd);border-radius:20px;font-size:8px;color:var(--text2);font-weight:500;}
+
+/* BLOCKED strip for master */
+.blocked-strip{
+  margin-top:44px;padding:16px 20px;background:rgba(255,61,113,0.05);
+  border:1px solid rgba(255,61,113,0.15);border-radius:8px;
+  display:flex;align-items:center;gap:12px;max-width:500px;
+}
+.blocked-icon{font-size:20px;flex-shrink:0;}
+.blocked-title{font-size:10px;font-weight:600;color:var(--red);margin-bottom:2px;}
+.blocked-sub{font-size:9px;color:var(--text3);line-height:1.5;}
+
+/* KPIs strip at top of hub */
+.hub-kpis{display:flex;gap:16px;margin-bottom:44px;flex-wrap:wrap;}
+.hkpi{background:var(--panel);border:1px solid var(--brd);border-radius:8px;padding:14px 18px;flex:1;min-width:160px;position:relative;overflow:hidden;}
+.hkpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--bar,linear-gradient(90deg,var(--cyan),#7B5CFA));}
+.hkpi-val{font-family:var(--ffm);font-size:1.4rem;color:var(--white);}
+.hkpi-lbl{font-size:8.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text2);margin-top:3px;}
+
+/* Pulse dot */
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:5px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* Toast */
+#toast{position:fixed;bottom:22px;right:22px;z-index:9999;background:var(--panel);border:1px solid var(--brd2);border-radius:8px;padding:12px 18px;font-size:11px;color:var(--white);box-shadow:0 10px 40px rgba(0,0,0,0.7);opacity:0;transform:translateY(8px);transition:all 0.3s;pointer-events:none;max-width:320px;}
+</style>
+</head>
+<body>
+
+<!-- NEXIA INTRO -->
+<div id="nexia-intro">
+  <div class="intro-gem">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="24" height="24" style="position:relative;z-index:1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+  </div>
+  <div class="intro-title">NEXIA<span>OS</span></div>
+  <div class="intro-sub">Portal do Tenant</div>
+  <div class="intro-bar"><div class="intro-fill"></div></div>
+</div>
+
+<!-- LOGIN -->
+<div id="login-wrap">
+  <div class="login-box">
+    <div class="login-gem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="20" height="20" style="position:relative;z-index:1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </div>
+    <div class="login-title">Portal Nexia</div>
+    <div class="login-sub">Acesso Tenant — Clearance 50</div>
+    <label class="l-lbl">E-mail</label>
+    <input class="l-inp" id="l-email" type="email" placeholder="henrique@viajantepro.com.br" autocomplete="username">
+    <label class="l-lbl">Senha</label>
+    <input class="l-inp" id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')HUB.login()">
+    <button class="l-btn" onclick="HUB.login()">ACESSAR PORTAL</button>
+    <div class="l-err" id="l-err"></div>
+    <div class="l-hint">Demo: <strong>henrique@viajantepro.com.br</strong> / <strong>Henrique01@</strong><br>Acesso bloqueado ao NEXIA Master Admin.</div>
+  </div>
+</div>
+
+<!-- HUB -->
+<div id="hub-wrap">
+  <div class="hub-header">
+    <div class="hub-gem">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="16" height="16" style="position:relative;z-index:1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </div>
+    <div>
+      <div class="hub-brand">NEXIA<span>OS</span></div>
+      <div style="font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text3)">Portal do Tenant</div>
+    </div>
+    <div class="hub-spacer"></div>
+    <div class="hub-user">
+      <div class="hub-avatar" id="hub-avatar">HB</div>
+      <div>
+        <div class="hub-uname" id="hub-uname">Henrique Bezerra</div>
+        <div class="hub-urole"><span class="pulse-dot"></span>Tenant Admin · Clearance 50</div>
+      </div>
+    </div>
+    <button class="hub-logout" onclick="HUB.logout()">Sair</button>
+  </div>
+
+  <div class="hub-main">
+    <div class="hub-eyebrow">Painel do Tenant</div>
+    <div class="hub-title">Escolha sua Agência</div>
+    <div class="hub-desc">Você tem acesso a 2 verticais ativas. Selecione para gerenciar passageiros, campanhas, CMS e bônus.</div>
+
+    <!-- KPI strip (feeds from Firestore) -->
+    <div class="hub-kpis">
+      <div class="hkpi" style="--bar:linear-gradient(90deg,var(--gold),#FFB020)">
+        <div class="hkpi-val" id="hub-pax">—</div>
+        <div class="hkpi-lbl">Passageiros Ativos</div>
+      </div>
+      <div class="hkpi" style="--bar:linear-gradient(90deg,var(--cyan),#7B5CFA)">
+        <div class="hkpi-val" id="hub-meetings">—</div>
+        <div class="hkpi-lbl">Reuniões CES 2027</div>
+      </div>
+      <div class="hkpi" style="--bar:linear-gradient(90deg,var(--green),var(--cyan))">
+        <div class="hkpi-val" id="hub-nexions">—</div>
+        <div class="hkpi-lbl">Néxions Distribuídos</div>
+      </div>
+      <div class="hkpi" style="--bar:linear-gradient(90deg,#7B5CFA,var(--red))">
+        <div class="hkpi-val" id="hub-flash">—</div>
+        <div class="hkpi-lbl">Flash Sales Ativas</div>
+      </div>
+    </div>
+
+    <!-- Agency cards -->
+    <div class="hub-grid">
+
+      <!-- Viajante Pro -->
+      <div class="agency-card vp" style="--card-bar:linear-gradient(90deg,var(--gold),#FFB020)" onclick="HUB.enter('vp')">
+        <div class="card-icon">✈️</div>
+        <div class="card-name">Viajante Pro</div>
+        <div class="card-id">VP_AGENCIA_01</div>
+        <div class="card-desc">Super App de viagens com CRM de passageiros, guias em campo, flash sales, sistema de fidelidade e CMS white-label completo.</div>
+        <div class="card-modules">
+          <span class="module-tag">Passageiros</span>
+          <span class="module-tag">Guias</span>
+          <span class="module-tag">Flash Sales</span>
+          <span class="module-tag">Néxions</span>
+          <span class="module-tag">CMS</span>
+          <span class="module-tag">PWA</span>
+        </div>
+        <div class="card-stats">
+          <div class="stat-item">
+            <div class="stat-val" id="vp-pax-count">—</div>
+            <div class="stat-lbl">Passageiros</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val" id="vp-guides-count">—</div>
+            <div class="stat-lbl">Guias Online</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val" id="vp-nexions-total">—</div>
+            <div class="stat-lbl">Néxions</div>
+          </div>
+        </div>
+        <button class="card-btn gold">Gerenciar Viajante Pro →</button>
+      </div>
+
+      <!-- CES 2027 -->
+      <div class="agency-card ces" style="--card-bar:linear-gradient(90deg,var(--cyan),#7B5CFA)" onclick="HUB.enter('ces')">
+        <div class="card-icon">⚡</div>
+        <div class="card-name">CES 2027 — CES Brasil 2027</div>
+        <div class="card-id">CES_2027_BR</div>
+        <div class="card-desc">Portal B2B para a missão empresarial brasileira em Las Vegas. Gestão de executivos, reuniões, compliance e despesas.</div>
+        <div class="card-modules">
+          <span class="module-tag">Executivos</span>
+          <span class="module-tag">Reuniões B2B</span>
+          <span class="module-tag">Compliance</span>
+          <span class="module-tag">Despesas</span>
+          <span class="module-tag">CMS</span>
+        </div>
+        <div class="card-stats">
+          <div class="stat-item">
+            <div class="stat-val" id="ces-exec-count">—</div>
+            <div class="stat-lbl">Executivos</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val" id="ces-meetings-count">—</div>
+            <div class="stat-lbl">Reuniões</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-val" id="ces-spend-total">—</div>
+            <div class="stat-lbl">Gasto (US$)</div>
+          </div>
+        </div>
+        <button class="card-btn cyan">Gerenciar CES 2027 →</button>
+      </div>
+
+    </div>
+
+    <!-- Master blocked strip -->
+    <div class="blocked-strip">
+      <div class="blocked-icon">🔒</div>
+      <div>
+        <div class="blocked-title">NEXIA Master Admin — Acesso Restrito</div>
+        <div class="blocked-sub">Esta área requer Clearance 100 (God Mode). Para consultar o painel consolidado, contate o Admin Nexia.</div>
+      </div>
+    </div>
+
+  </div><!-- /hub-main -->
+</div><!-- /hub-wrap -->
+
+<div id="toast"></div>
+
+<!-- Firebase Core -->
+<script src="../../core/config.js"></script>
+<script src="../../core/governance.js"></script>
+<script src="../../core/bridge.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// NEXIA TENANT HUB — Portal Unificado para Tenant Admins
+// Clearance 50 — Henrique Bezerra (e outros tenant admins)
+// ═══════════════════════════════════════════════════════════════
+
+const CREDENTIALS = {
+  "henrique@viajantepro.com.br": {
+    pass: "Henrique01@",
+    clearance: 50,
+    name: "Henrique Bezerra",
+    initials: "HB",
+    role: "Tenant Admin",
+    tenants: ["VP_AGENCIA_01", "CES_2027_BR"],
+    redirectVP:  "../viajante-pro/vp-admin.html",
+    redirectCES: "../ces/ces-admin.html"
+  },
+  "rafael@techbr.com.br": {
+    pass: "CES Brasil 20272027@",
+    clearance: 50,
+    name: "Rafael Cardoso",
+    initials: "RC",
+    role: "Admin CES",
+    tenants: ["CES_2027_BR"],
+    redirectCES: "../ces/ces-admin.html"
+  }
+};
+
+// Block master admin access at this level
+const BLOCKED_PATHS = ['nexia-master', 'nexia-admin'];
+
+const HUB = {
+  _user: null,
+
+  init() {
+    // Check if someone tries to access master via this hub
+    const path = window.location.pathname.toLowerCase();
+    if (BLOCKED_PATHS.some(p => path.includes(p))) {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#FF3D71;font-family:Sora,sans-serif;font-size:14px;">🔒 Acesso negado — Clearance insuficiente</div>';
+      return;
+    }
+
+    // Try restore session
+    try {
+      const saved = sessionStorage.getItem('nexia_tenant_session');
+      if (saved) {
+        this._user = JSON.parse(saved);
+        this._showHub();
+        return;
+      }
+    } catch(e) {}
+
+    document.getElementById('login-wrap').style.display = 'flex';
+  },
+
+  login() {
+    const email = document.getElementById('l-email').value.trim().toLowerCase();
+    const pass  = document.getElementById('l-pass').value;
+    const errEl = document.getElementById('l-err');
+    errEl.textContent = '';
+
+    const cred = CREDENTIALS[email];
+    if (!cred || cred.pass !== pass) {
+      errEl.textContent = 'Credenciais inválidas. Verifique e-mail e senha.';
+      return;
+    }
+
+    // Block any clearance >= 100 (God Mode) — they should use nexia-master directly
+    if (cred.clearance >= 100) {
+      errEl.textContent = 'Conta God Mode deve acessar o NEXIA Master Admin diretamente.';
+      return;
+    }
+
+    this._user = { ...cred, email };
+    try { sessionStorage.setItem('nexia_tenant_session', JSON.stringify(this._user)); } catch(e) {}
+    this._showHub();
+  },
+
+  _showHub() {
+    document.getElementById('login-wrap').style.display  = 'none';
+    document.getElementById('hub-wrap').style.display    = 'block';
+    document.getElementById('hub-uname').textContent     = this._user.name;
+    document.getElementById('hub-avatar').textContent    = this._user.initials;
+    this._loadFirestoreStats();
+    this.toast(`✓ Bem-vindo, ${this._user.name.split(' ')[0]}! ${this._user.tenants.length} agência(s) disponíve${this._user.tenants.length > 1 ? 'is' : 'l'}.`);
+  },
+
+  enter(agency) {
+    const u = this._user;
+    if (!u) return;
+
+    // Store context for the admin pages
+    try {
+      sessionStorage.setItem('nexia_entry_context', JSON.stringify({
+        from: 'tenant-hub',
+        user: u.email,
+        name: u.name,
+        clearance: u.clearance,
+        agency
+      }));
+    } catch(e) {}
+
+    if (agency === 'vp' && u.redirectVP) {
+      this.toast('⚡ Abrindo Viajante Pro Admin...');
+      setTimeout(() => window.location.href = u.redirectVP, 600);
+    } else if (agency === 'ces' && u.redirectCES) {
+      this.toast('⚡ Abrindo CES 2027 Admin...');
+      setTimeout(() => window.location.href = u.redirectCES, 600);
+    } else {
+      this.toast('⚠️ Você não tem acesso a esta agência.');
+    }
+  },
+
+  logout() {
+    try { sessionStorage.removeItem('nexia_tenant_session'); sessionStorage.removeItem('nexia_entry_context'); } catch(e) {}
+    this._user = null;
+    document.getElementById('hub-wrap').style.display   = 'none';
+    document.getElementById('login-wrap').style.display = 'flex';
+    document.getElementById('l-err').textContent = '';
+  },
+
+  _loadFirestoreStats() {
+    const tryLoad = () => {
+      if (typeof NEXIA === 'undefined' || !NEXIA._ready || !NEXIA.db) {
+        setTimeout(tryLoad, 500); return;
+      }
+
+      // VP Passengers
+      NEXIA.db.collection('tenants').doc('VP_AGENCIA_01').collection('passengers')
+        .onSnapshot(snap => {
+          const n = snap.size || 9; // fallback demo
+          ['hub-pax','vp-pax-count'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.textContent = n;
+          });
+        }, () => {
+          ['hub-pax','vp-pax-count'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.textContent = '9';
+          });
+        });
+
+      // Guides online
+      NEXIA.db.collection('tenants').doc('VP_AGENCIA_01').collection('guides')
+        .where('status', '==', 'online')
+        .onSnapshot(snap => {
+          const el = document.getElementById('vp-guides-count');
+          if (el) el.textContent = snap.size || '3';
+        }, () => {
+          const el = document.getElementById('vp-guides-count'); if (el) el.textContent = '3';
+        });
+
+      // Néxions distributed
+      NEXIA.db.collection('tenants').doc('VP_AGENCIA_01').collection('nexions_log')
+        .onSnapshot(snap => {
+          let total = 0;
+          snap.forEach(d => { total += parseInt(d.data().amount || 0); });
+          const display = total > 0 ? total.toLocaleString('pt-BR') : '2.850';
+          ['hub-nexions','vp-nexions-total'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.textContent = display;
+          });
+        }, () => {
+          ['hub-nexions','vp-nexions-total'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.textContent = '2.850';
+          });
+        });
+
+      // Flash sales
+      NEXIA.db.collection('tenants').doc('VP_AGENCIA_01').collection('flash_sales')
+        .where('status', '==', 'sent')
+        .onSnapshot(snap => {
+          const el = document.getElementById('hub-flash');
+          if (el) el.textContent = snap.size || '2';
+        }, () => {
+          const el = document.getElementById('hub-flash'); if (el) el.textContent = '2';
+        });
+
+      // CES meetings
+      NEXIA.db.collection('tenants').doc('CES_2027_BR').collection('meetings')
+        .onSnapshot(snap => {
+          const el = document.getElementById('ces-meetings-count');
+          if (el) el.textContent = snap.size || '6';
+          const hub = document.getElementById('hub-meetings');
+          if (hub) hub.textContent = snap.size || '6';
+        }, () => {
+          const el = document.getElementById('ces-meetings-count'); if (el) el.textContent = '6';
+          const hub = document.getElementById('hub-meetings'); if (hub) hub.textContent = '6';
+        });
+
+      // CES executives
+      NEXIA.db.collection('tenants').doc('CES_2027_BR').collection('executives')
+        .onSnapshot(snap => {
+          const el = document.getElementById('ces-exec-count');
+          if (el) el.textContent = snap.size || '12';
+        }, () => {
+          const el = document.getElementById('ces-exec-count'); if (el) el.textContent = '12';
+        });
+
+      // CES spend
+      NEXIA.db.collection('tenants').doc('CES_2027_BR').collection('expenses')
+        .onSnapshot(snap => {
+          let total = 0;
+          snap.forEach(d => { total += parseFloat(d.data().valueUSD || 0); });
+          const el = document.getElementById('ces-spend-total');
+          if (el) el.textContent = total > 0 ? '$' + Math.round(total/1000) + 'k' : '$23k';
+        }, () => {
+          const el = document.getElementById('ces-spend-total'); if (el) el.textContent = '$23k';
+        });
+    };
+    tryLoad();
+  },
+
+  toast(msg, dur = 3000) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.opacity = '1'; el.style.transform = 'translateY(0)';
+    setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(8px)'; }, dur);
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => HUB.init());
+</script>
+</body>
+</html>

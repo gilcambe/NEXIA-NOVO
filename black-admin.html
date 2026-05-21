@@ -1,0 +1,67 @@
+/**
+ * NEXIA OS — Rate Limiter Edge Function v1.0
+ * Protege todas as Netlify Functions contra abuso
+ * Máximo: 100 req/min por IP, 500 req/hora
+ */
+const WINDOW_MIN  = 60 * 1000;   // 1 minuto
+const WINDOW_HOUR = 60 * 60 * 1000;
+const MAX_PER_MIN  = 100;
+const MAX_PER_HOUR = 500;
+
+// In-memory store (por worker instance)
+const _store = new Map();
+
+function getRecord(ip) {
+  const now = Date.now();
+  if (!_store.has(ip)) {
+    _store.set(ip, { min: [], hour: [], blocked: false, blockUntil: 0 });
+  }
+  const rec = _store.get(ip);
+  // Purge old timestamps
+  rec.min  = rec.min.filter(t  => now - t < WINDOW_MIN);
+  rec.hour = rec.hour.filter(t => now - t < WINDOW_HOUR);
+  return rec;
+}
+
+export default async (request, context) => {
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim()
+           || context.ip
+           || '0.0.0.0';
+
+  const rec = getRecord(ip);
+  const now = Date.now();
+
+  // Check if currently blocked
+  if (rec.blocked && now < rec.blockUntil) {
+    return new Response(
+      JSON.stringify({ error: 'Too many requests. Try again later.', retryAfter: Math.ceil((rec.blockUntil - now)/1000) }),
+      { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': String(Math.ceil((rec.blockUntil-now)/1000)) } }
+    );
+  }
+
+  rec.min.push(now);
+  rec.hour.push(now);
+
+  if (rec.min.length > MAX_PER_MIN || rec.hour.length > MAX_PER_HOUR) {
+    rec.blocked = true;
+    rec.blockUntil = now + (rec.min.length > MAX_PER_MIN ? 60000 : 300000);
+    console.warn(`[NEXIA Rate Limiter] IP ${ip} blocked. min=${rec.min.length} hour=${rec.hour.length}`);
+    return new Response(
+      JSON.stringify({ error: 'Rate limit exceeded.', ip, min: rec.min.length, hour: rec.hour.length }),
+      { status: 429, headers: { 'Content-Type': 'application/json', 'X-RateLimit-Limit': String(MAX_PER_MIN), 'X-RateLimit-Remaining': '0' } }
+    );
+  }
+
+  const response = await context.next();
+  return new Response(response.body, {
+    status: response.status,
+    headers: {
+      ...Object.fromEntries(response.headers),
+      'X-RateLimit-Limit': String(MAX_PER_MIN),
+      'X-RateLimit-Remaining': String(Math.max(0, MAX_PER_MIN - rec.min.length)),
+      'X-RateLimit-Reset': String(Math.ceil((rec.min[0] + WINDOW_MIN) / 1000)),
+    }
+  });
+};
+
+export const config = { path: '/netlify/functions/*' };

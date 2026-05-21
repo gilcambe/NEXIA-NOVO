@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Viajante Pro — Guia Operacional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;600;700;800&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:  #F7F4EF; --bg2: #EFECE6; --bg3: #E5E1D8; --sur: #FFFFFF;
+  --brd: rgba(0,0,0,0.07); --brd2: rgba(0,0,0,0.14);
+  --ink: #0E0E0D; --ink3: #3D3C38; --ink4: #8A8780; --ink5: #C0BDB5;
+  --gold: #B8935A; --g2: rgba(184,147,90,0.1);
+  --grn: #1F7A4A;  --gr2: rgba(31,122,74,0.09);
+  --red: #C0392B;  --rd2: rgba(192,57,43,0.08);
+  --amb: #B5620A;  --am2: rgba(181,98,10,0.09);
+  --blu: #1A4080;  --bl2: rgba(26,64,128,0.08);
+  --pur: #5B2D8E;  --pr2: rgba(91,45,142,0.08);
+  --ff: 'Sora',system-ui,sans-serif;
+  --ffs:'DM Serif Display',Georgia,serif;
+  --ffm:'JetBrains Mono',monospace;
+  --nh: 72px; --ease: cubic-bezier(0.22,1,0.36,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{background:#18160f;min-height:100vh;display:flex;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;}
+body{width:100%;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:var(--ff);}
+
+/* SHELL */
+#shell{position:relative;width:100%;max-width:400px;height:100vh;max-height:880px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column;}
+@media(min-width:460px){#shell{border-radius:46px;box-shadow:0 40px 120px rgba(0,0,0,0.65),0 0 0 1px rgba(255,255,255,0.06),inset 0 1px 0 rgba(255,255,255,0.1);height:880px;}}
+@media(max-width:460px){html{background:var(--bg);}}
+
+/* STATUS BAR */
+.sbar{height:44px;flex-shrink:0;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 9px;background:var(--ink);}
+.sbar-time{font-family:var(--ffm);font-size:11px;font-weight:500;color:rgba(255,255,255,0.65);}
+.sbar-ico{font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:2px;}
+
+/* TOPBAR */
+#topbar{flex-shrink:0;background:var(--ink);padding:12px 18px 14px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.tb-r1{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.tb-wordmark{font-family:'DM Serif Display',Georgia,serif;font-style:italic;font-weight:400;font-size:1rem;color:var(--ink);letter-spacing:0.02em;}
+.tb-role{font-family:var(--ff);font-size:7px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;padding:3px 10px;background:var(--gold);color:#FFF;}
+.tb-av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-family:var(--ff);font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);cursor:pointer;}
+
+/* GROUP SELECT */
+.grp-row{display:flex;gap:7px;}
+.grp-btn{flex:1;padding:8px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);font-family:var(--ff);font-size:9px;font-weight:600;color:rgba(255,255,255,0.35);cursor:pointer;text-align:center;transition:all 0.18s;line-height:1.3;}
+.grp-btn.active{border-color:var(--gold);color:#FFF;background:rgba(184,147,90,0.12);}
+.grp-btn:hover:not(.active){color:rgba(255,255,255,0.65);border-color:rgba(255,255,255,0.18);}
+
+/* PROGRESS STRIP */
+#prog-strip{flex-shrink:0;background:var(--ink);padding:10px 18px 12px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.ps-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.ps-label{font-family:var(--ff);font-size:7.5px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.35);}
+.ps-count{font-family:var(--ffm);font-size:1rem;color:var(--gold);}
+.ps-bar{height:3px;background:rgba(255,255,255,0.08);overflow:hidden;}
+.ps-fill{height:100%;background:var(--gold);transition:width 0.55s var(--ease);}
+
+/* BOTTOM NAV */
+#bnav{position:absolute;bottom:0;left:0;right:0;height:var(--nh);background:rgba(247,244,239,0.97);backdrop-filter:blur(24px);border-top:1px solid var(--brd);display:grid;grid-template-columns:repeat(4,1fr);z-index:60;}
+.nb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:none;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;padding:0;}
+.nb-ico{font-size:19px;transition:transform 0.28s var(--ease);}
+.nb-lbl{font-family:var(--ff);font-size:7px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink5);transition:color 0.2s;}
+.nb.active .nb-lbl{color:var(--ink);}
+.nb.active .nb-ico{transform:scale(1.18) translateY(-2px);}
+.nb.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--gold);}
+.nb.crise-btn .nb-lbl{color:var(--red);}
+.nb.crise-btn.active .nb-lbl{color:var(--red);}
+.nb.crise-btn.active::after{background:var(--red);}
+
+/* VIEW ROOT */
+#view-root{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:var(--nh);-webkit-overflow-scrolling:touch;}
+#view-root::-webkit-scrollbar{display:none;}
+.view-enter{animation:ven 0.26s var(--ease);}
+@keyframes ven{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+/* TOAST */
+#toast-root{position:absolute;top:180px;left:50%;transform:translateX(-50%);z-index:999;width:calc(100% - 32px);display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;}
+.toast{background:var(--ink);color:var(--bg);padding:10px 18px;font-family:var(--ff);font-size:10.5px;border-left:2.5px solid var(--gold);animation:tin 0.25s var(--ease);max-width:100%;}
+.toast.red{border-left-color:var(--red);}
+.toast.grn{border-left-color:var(--grn);}
+@keyframes tin{from{opacity:0;transform:translateY(-6px);}to{opacity:1;}}
+
+/* SHARED */
+.eyebrow{font-family:var(--ff);font-size:7.5px;font-weight:600;letter-spacing:0.32em;text-transform:uppercase;color:var(--ink4);}
+.sec{padding:18px 20px 0;}
+.pill{display:inline-flex;align-items:center;font-family:var(--ff);font-size:7px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;}
+.pill-grn{background:var(--gr2);color:var(--grn);border:1px solid rgba(31,122,74,0.2);}
+.pill-amb{background:var(--am2);color:var(--amb);border:1px solid rgba(181,98,10,0.2);}
+.pill-red{background:var(--rd2);color:var(--red);border:1px solid rgba(192,57,43,0.2);}
+.pill-blu{background:var(--bl2);color:var(--blu);border:1px solid rgba(26,64,128,0.2);}
+.pill-gold{background:var(--g2);color:var(--gold);border:1px solid rgba(184,147,90,0.22);}
+.pill-ink{background:rgba(12,12,11,0.07);color:var(--ink);border:1px solid rgba(12,12,11,0.12);}
+.pill-pur{background:var(--pr2);color:var(--pur);border:1px solid rgba(91,45,142,0.2);}
+.f-lbl{display:block;font-family:var(--ff);font-size:7.5px;font-weight:600;letter-spacing:0.24em;text-transform:uppercase;color:var(--ink4);margin-bottom:7px;}
+.f-inp{width:100%;padding:11px 0;background:transparent;border:none;border-bottom:1px solid var(--brd);font-family:var(--ff);font-size:13px;font-weight:300;color:var(--ink);outline:none;transition:border-color 0.2s;-webkit-appearance: none; appearance: none;}
+.f-inp:focus{border-bottom-color:var(--gold);}
+.f-inp::placeholder{color:var(--ink5);}
+.f-sel{width:100%;padding:11px 0;background:transparent;border:none;border-bottom:1px solid var(--brd);font-family:var(--ff);font-size:13px;font-weight:300;color:var(--ink);outline:none;-webkit-appearance: none; appearance: none;;cursor:pointer;transition:border-color 0.2s;}
+.f-sel:focus{border-bottom-color:var(--gold);}
+.f-ta{width:100%;padding:11px 0;background:transparent;border:none;border-bottom:1px solid var(--brd);font-family:var(--ff);font-size:13px;font-weight:300;color:var(--ink);outline:none;resize:none;min-height:72px;transition:border-color 0.2s;}
+.f-ta:focus{border-bottom-color:var(--gold);}
+.f-ta::placeholder{color:var(--ink5);}
+.btn-blk{width:100%;padding:14px;background:var(--ink);color:var(--bg);font-family:var(--ff);font-size:8.5px;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity 0.2s;}
+.btn-blk:hover{opacity:0.82;}
+.btn-blk.gold{background:var(--gold);}
+.btn-blk.grn{background:var(--grn);}
+.btn-blk.red{background:var(--red);}
+
+/* ══ MANIFESTO ══ */
+.manifest-item{background:var(--sur);border:1px solid var(--brd);margin-bottom:7px;overflow:hidden;transition:border-color 0.2s;}
+.manifest-item.checked-in{border-left:3px solid var(--grn);}
+.manifest-item.sos{border-left:3px solid var(--red);animation:sosblink 1.5s ease-in-out infinite;}
+@keyframes sosblink{0%,100%{border-left-color:var(--red);}50%{border-left-color:rgba(192,57,43,0.3);}}
+.mi-header{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;user-select:none;}
+.mi-num{font-family:var(--ffm);font-size:10px;color:var(--ink5);width:20px;flex-shrink:0;}
+.mi-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--ff);font-size:12px;font-weight:700;flex-shrink:0;}
+.mi-info{flex:1;min-width:0;}
+.mi-name{font-family:var(--ff);font-size:12.5px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mi-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px;}
+.mi-status{flex-shrink:0;font-size:16px;}
+.mi-chevron{font-size:10px;color:var(--ink5);flex-shrink:0;transition:transform 0.25s var(--ease);}
+.manifest-item.open .mi-chevron{transform:rotate(180deg);}
+.mi-body{display:none;padding:0 14px 14px;border-top:1px solid var(--brd);}
+.manifest-item.open .mi-body{display:block;}
+.mi-body-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin-top:12px;}
+.mi-field-lbl{font-family:var(--ff);font-size:7px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink5);margin-bottom:2px;}
+.mi-field-val{font-family:var(--ff);font-size:11px;font-weight:400;color:var(--ink3);}
+.mi-actions{display:flex;gap:7px;margin-top:12px;}
+.mi-btn{flex:1;padding:7px;background:var(--bg2);border:1px solid var(--brd);font-family:var(--ff);font-size:7.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink4);cursor:pointer;text-align:center;transition:all 0.15s;}
+.mi-btn:hover{background:var(--ink);color:var(--sur);border-color:var(--ink);}
+.mi-btn.grn-btn{background:var(--gr2);color:var(--grn);border-color:rgba(31,122,74,0.2);}
+.mi-btn.grn-btn:hover{background:var(--grn);color:#FFF;}
+.mi-btn.red-btn{background:var(--rd2);color:var(--red);border-color:rgba(192,57,43,0.2);}
+.mi-btn.red-btn:hover{background:var(--red);color:#FFF;}
+
+/* MEGA CHECKIN BTN */
+.mega-btn{
+  margin:16px 20px; padding:20px;
+  background:var(--ink); display:flex; align-items:center; gap:14px;
+  cursor:pointer; transition:background 0.2s; border:none; width:calc(100% - 40px);
+  text-align:left;
+}
+.mega-btn:hover{background:#222;}
+.mega-btn.done{background:var(--grn);}
+.mega-btn.loading{background:var(--amb);}
+.mega-ico{font-size:28px;flex-shrink:0;}
+.mega-label{font-family:var(--ff);font-size:13px;font-weight:700;color:#FFF;letter-spacing:0.02em;}
+.mega-sub{font-family:var(--ff);font-size:9px;font-weight:300;color:rgba(255,255,255,0.5);margin-top:2px;}
+
+/* ══ CRISE ══ */
+.crise-tabs{display:flex;padding:14px 20px 0;border-bottom:1px solid var(--brd);gap:0;}
+.ctab{flex:1;padding:9px 4px;background:none;border:none;cursor:pointer;font-family:var(--ff);font-size:7.5px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink5);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color 0.2s;}
+.ctab.active{color:var(--red);border-bottom-color:var(--red);}
+.crise-form{padding:20px;}
+.sev-row{display:flex;gap:8px;margin-top:4px;}
+.sev-btn{flex:1;padding:9px 4px;border:1.5px solid var(--brd);background:transparent;font-family:var(--ff);font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink4);cursor:pointer;text-align:center;transition:all 0.18s;}
+.sev-btn[data-s="baixa"].active{border-color:var(--grn);color:var(--grn);background:var(--gr2);}
+.sev-btn[data-s="media"].active{border-color:var(--amb);color:var(--amb);background:var(--am2);}
+.sev-btn[data-s="critica"].active{border-color:var(--red);color:var(--red);background:var(--rd2);}
+.ocorrencias-list{padding:0 20px;display:flex;flex-direction:column;gap:8px;margin-top:16px;}
+.ocorrencia-card{background:var(--sur);border:1px solid var(--brd);padding:12px 14px;border-left:3px solid var(--brd);}
+.ocorrencia-card[data-s="baixa"]{border-left-color:var(--grn);}
+.ocorrencia-card[data-s="media"]{border-left-color:var(--amb);}
+.ocorrencia-card[data-s="critica"]{border-left-color:var(--red);}
+.oc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.oc-tipo{font-family:var(--ff);font-size:10.5px;font-weight:600;color:var(--ink);}
+.oc-ts{font-family:var(--ffm);font-size:8.5px;color:var(--ink5);}
+.oc-pass{font-family:var(--ff);font-size:9.5px;font-weight:300;color:var(--ink4);margin-bottom:4px;}
+.oc-desc{font-family:var(--ff);font-size:11px;font-weight:300;color:var(--ink3);line-height:1.45;}
+
+/* ══ BROADCAST ══ */
+.bc-tabs{display:flex;padding:14px 20px 0;border-bottom:1px solid var(--brd);gap:0;}
+.bctab{flex:1;padding:9px 4px;background:none;border:none;cursor:pointer;font-family:var(--ff);font-size:7.5px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink5);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color 0.2s;}
+.bctab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* POLL */
+.poll-preview{background:var(--ink);padding:18px;margin-bottom:14px;position:relative;overflow:hidden;}
+.poll-preview::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top right,rgba(184,147,90,0.1),transparent 60%);pointer-events:none;}
+.pp-lbl{font-family:var(--ff);font-size:7px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;}
+.pp-q{font-family:var(--ff);font-size:13px;font-weight:500;color:#FFF;line-height:1.4;margin-bottom:4px;}
+.pp-opts{display:flex;flex-direction:column;gap:5px;margin-top:10px;}
+.pp-opt{padding:7px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-family:var(--ff);font-size:10.5px;font-weight:300;color:rgba(255,255,255,0.7);}
+.poll-results{margin-top:14px;display:flex;flex-direction:column;gap:8px;}
+.pr-row{display:flex;align-items:center;gap:10px;}
+.pr-lbl{font-family:var(--ff);font-size:10.5px;font-weight:300;color:var(--ink3);width:120px;flex-shrink:0;}
+.pr-bar{flex:1;height:18px;background:var(--bg3);overflow:hidden;}
+.pr-fill{height:100%;background:var(--gold);transition:width 0.6s var(--ease);}
+.pr-n{font-family:var(--ffm);font-size:9.5px;color:var(--ink4);width:30px;text-align:right;}
+
+/* PUSH */
+.push-preview{background:var(--ink);padding:16px;margin-bottom:14px;}
+.pu-app{font-family:var(--ff);font-size:7px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;}
+.pu-title{font-family:var(--ff);font-size:13px;font-weight:600;color:#FFF;margin-bottom:4px;}
+.pu-body{font-family:var(--ff);font-size:11px;font-weight:300;color:rgba(255,255,255,0.6);line-height:1.5;}
+.push-hist-item{padding:10px 0;border-bottom:1px solid var(--brd);}
+.phi-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;}
+.phi-title{font-family:var(--ff);font-size:11.5px;font-weight:500;color:var(--ink);}
+.phi-ts{font-family:var(--ffm);font-size:8.5px;color:var(--ink5);}
+.phi-body{font-family:var(--ff);font-size:9.5px;font-weight:300;color:var(--ink4);margin-bottom:4px;}
+
+/* MODERATION */
+.mod-grid{padding:14px 20px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mod-card{background:var(--sur);border:1px solid var(--brd);overflow:hidden;position:relative;}
+.mod-thumb{width:100%;aspect-ratio:1;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:36px;position:relative;overflow:hidden;}
+.mod-overlay{position:absolute;inset:0;background:rgba(14,14,13,0.55);display:flex;align-items:flex-end;padding:7px;}
+.mod-sender{font-family:var(--ff);font-size:8px;font-weight:600;color:#FFF;letter-spacing:0.08em;text-shadow:0 1px 3px rgba(0,0,0,0.6);}
+.mod-actions{display:flex;border-top:1px solid var(--brd);}
+.mod-btn{flex:1;padding:9px;background:none;border:none;font-size:16px;cursor:pointer;transition:background 0.15s;border-right:1px solid var(--brd);}
+.mod-btn:last-child{border-right:none;}
+.mod-btn:hover{background:var(--bg2);}
+.mod-btn.approve:hover{background:var(--gr2);}
+.mod-btn.reject:hover{background:var(--rd2);}
+.mod-card.approved{border-color:var(--grn);}
+.mod-card.rejected{opacity:0.4;}
+.mod-empty{padding:30px 20px;text-align:center;font-family:var(--ff);font-size:9.5px;font-weight:300;color:var(--ink5);}
+.mod-approved-badge{position:absolute;top:6px;right:6px;background:var(--grn);color:#FFF;font-family:var(--ff);font-size:7px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:2px 7px;}
+
+/* ── NEXIA INTRO KEYFRAMES ── */
+@keyframes introFadeOut{to{opacity:0;}}
+@keyframes introGemIn{from{transform:scale(0.5) rotate(-10deg);opacity:0;}to{transform:scale(1) rotate(0);opacity:1;}}
+@keyframes introTextIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+@keyframes introBarIn{from{opacity:0;}to{opacity:1;}}
+@keyframes introBarFill{from{width:0%;}to{width:100%;}}
+
+/* ══ SOS EMERGENCY MODAL ══ */
+#sos-modal{
+  display:none;position:fixed;inset:0;z-index:99990;
+  background:#8B0000;
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;text-align:center;
+  animation:sosPulse 0.8s ease-in-out infinite alternate;
+}
+#sos-modal.visible{ display:flex; }
+@keyframes sosPulse{from{background:#8B0000;}to{background:#C0392B;}}
+.sos-modal-ring{
+  width:90px;height:90px;border-radius:50%;border:3px solid rgba(255,255,255,0.5);
+  display:flex;align-items:center;justify-content:center;font-size:44px;
+  margin-bottom:20px;
+  animation:sosRing 0.6s ease-in-out infinite alternate;
+}
+@keyframes sosRing{from{box-shadow:0 0 0 0 rgba(255,255,255,0.6);}to{box-shadow:0 0 0 18px rgba(255,255,255,0);}}
+.sos-modal-label{
+  font-family:var(--ff);font-size:9px;font-weight:700;letter-spacing:0.38em;
+  text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:12px;
+}
+.sos-modal-title{
+  font-family:var(--ff);font-size:1.5rem;font-weight:800;color:#FFF;
+  line-height:1.2;margin-bottom:8px;letter-spacing:-0.01em;
+}
+.sos-modal-sub{
+  font-family:var(--ff);font-size:12px;font-weight:300;
+  color:rgba(255,255,255,0.75);line-height:1.5;margin-bottom:32px;
+  max-width:280px;
+}
+.sos-modal-detail{
+  background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.15);
+  padding:12px 18px;margin-bottom:28px;width:100%;max-width:300px;text-align:left;
+}
+.sos-detail-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.sos-detail-row:last-child{margin-bottom:0;}
+.sos-detail-lbl{font-family:var(--ff);font-size:8px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+.sos-detail-val{font-family:var(--ffm);font-size:10px;color:#FFF;}
+.sos-resolve-btn{
+  width:100%;max-width:300px;padding:18px;
+  background:#FFF;color:#8B0000;
+  font-family:var(--ff);font-size:10px;font-weight:800;letter-spacing:0.26em;
+  text-transform:uppercase;border:none;cursor:pointer;
+  transition:transform 0.15s;
+}
+.sos-resolve-btn:hover{transform:scale(1.02);}
+.sos-resolve-btn:active{transform:scale(0.98);}
+.sos-dismiss-btn{
+  margin-top:10px;width:100%;max-width:300px;padding:11px;
+  background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);
+  font-family:var(--ff);font-size:8px;font-weight:600;letter-spacing:0.2em;
+  text-transform:uppercase;border:1px solid rgba(255,255,255,0.2);cursor:pointer;
+}
+
+/* ══ PASSENGERS TAB (Firebase real-time) ══ */
+.pax-header{
+  padding:14px 20px;border-bottom:1px solid var(--brd);
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--bg);
+}
+.pax-stats{display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid var(--brd);}
+.pax-stat{
+  flex:1;padding:8px 10px;background:var(--sur);border:1px solid var(--brd);
+  text-align:center;
+}
+.pax-stat-val{font-family:var(--ffm);font-size:1.1rem;color:var(--ink);}
+.pax-stat-lbl{font-family:var(--ff);font-size:7px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink5);margin-top:2px;}
+.pax-list{padding:12px 20px 20px;}
+.pax-card{
+  background:var(--sur);border:1px solid var(--brd);
+  margin-bottom:8px;overflow:hidden;
+  transition:border-color 0.2s;
+}
+.pax-card.checkedin{border-left:3px solid var(--grn);}
+.pax-card.sos-alert{border-left:3px solid var(--red);animation:sosblink 1.2s ease-in-out infinite;}
+.pax-card-row{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 12px;
+}
+.pax-av{
+  width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff);font-size:11px;font-weight:700;color:#FFF;
+}
+.pax-info{flex:1;min-width:0;}
+.pax-name{font-family:var(--ff);font-size:12px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pax-sub{font-family:var(--ff);font-size:9px;font-weight:300;color:var(--ink5);margin-top:1px;}
+.pax-checkin-btn{
+  flex-shrink:0;padding:6px 12px;border:1px solid var(--brd);
+  background:var(--bg2);font-family:var(--ff);font-size:7.5px;font-weight:600;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--ink4);cursor:pointer;
+  transition:all 0.15s;
+}
+.pax-checkin-btn.done{background:var(--gr2);color:var(--grn);border-color:rgba(31,122,74,0.3);}
+.pax-checkin-btn.sos-btn{background:var(--rd2);color:var(--red);border-color:rgba(192,57,43,0.3);}
+.pax-nexions{
+  font-family:var(--ffm);font-size:9px;color:var(--gold);
+  display:flex;align-items:center;gap:3px;margin-top:2px;
+}
+.pax-loading{
+  padding:40px 20px;text-align:center;
+  font-family:var(--ff);font-size:10px;font-weight:300;color:var(--ink5);
+}
+.pax-loading-ring{
+  width:28px;height:28px;border-radius:50%;
+  border:2px solid var(--brd);border-top-color:var(--gold);
+  animation:spin 0.9s linear infinite;margin:0 auto 12px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+
+<script src="../core/config.js"></script>
+<script src="../core/governance.js"></script>
+<script src="../core/bridge.js"></script>
+<!-- ✅ Firebase SDKs — SOS Receptor + Check-in em Tempo Real -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<!-- ── NEXIA THEME LOADER + Firestore Live ── -->
+<script>
+// @ts-nocheck
+(function(){
+  function _applyColor(cfg) {
+    var color = cfg.color || cfg.cor;
+    if (!color) return;
+    var hex = color.replace('#','');
+    var r=parseInt(hex.substring(0,2),16), g=parseInt(hex.substring(2,4),16), b=parseInt(hex.substring(4,6),16);
+    var rgb = r+','+g+','+b;
+    var root = document.documentElement;
+    root.style.setProperty('--gold',  color);
+    root.style.setProperty('--g2',    'rgba('+rgb+',0.10)');
+    root.style.setProperty('--brand', color);
+    root.style.setProperty('--blu',   color);
+    root.style.setProperty('--blu2',  'rgba('+rgb+',0.08)');
+    document.querySelectorAll('[data-brand-name]').forEach(function(el) {
+      if (cfg.brandName) el.textContent = cfg.brandName;
+    });
+    window._NEXIA_BRAND = cfg;
+  }
+
+  // Aplica imediatamente do localStorage
+  var raw = null;
+  try { raw = localStorage.getItem('nexia_theme_vp_guide'); } catch(e){}
+  if (!raw) { try { raw = localStorage.getItem('vp_master_cms_guide'); } catch(e){} }
+  if (!raw) { try { raw = localStorage.getItem('nexia_theme_vp_passenger'); } catch(e){} }
+  if (raw) { try { _applyColor(JSON.parse(raw)); } catch(e){} }
+
+  // Após DOM pronto: ativa Firestore onSnapshot para updates instantâneos
+  document.addEventListener('DOMContentLoaded', function() {
+    var _try = function() {
+      if (typeof NexiaTheme === 'undefined') { setTimeout(_try, 400); return; }
+      NexiaTheme.watchBrand('vp', 'guide', function(cfg) {
+        if (cfg) _applyColor(cfg);
+      });
+    };
+    _try();
+  });
+})();
+</script>
+<style id="nexia-light-override">
+/* NEXIA V12 — Light Mode Premium Default */
+:root {
+  --bg:#FAF8F5 !important; --bg2:#FFFFFF !important; --bg3:#F0EDE8 !important;
+  --panel:#FFFFFF !important; --surface:#FFFFFF !important; --surface2:#F5F2ED !important;
+  --border:#E5E0D8 !important; --brd:#E5E0D8 !important; --brd2:#D0C8BC !important;
+  --text:#1A1714 !important; --txt:#1A1714 !important;
+  --text2:#4A4540 !important; --txt2:#4A4540 !important;
+  --text3:#8A8078 !important; --txt3:#8A8078 !important;
+  --muted:#8A8078 !important; --muted2:#A09890 !important;
+  --ink:#1A1714 !important; --ink2:#3A3530 !important; --ink3:#6B6460 !important;
+  --white:#1A1714 !important;
+}
+body { background:#FAF8F5 !important; color:#1A1714 !important; }
+</style>
+</head>
+<body>
+<div id="shell">
+
+  <!-- STATUS BAR -->
+  <div class="sbar">
+    <span class="sbar-time" id="sbar-time">9:41</span>
+    <span class="sbar-ico">●●● 🔋</span>
+  </div>
+
+  <!-- TOPBAR -->
+  <div id="topbar"><div style="height:36px;--vp-logo-color:#C4955A"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" style="height:100%;width:auto">
+  <defs>
+    <style>
+      #vpm-plane { transform-origin: 18px 12px; animation: vpm-hover 3s ease-in-out infinite; }
+      @keyframes vpm-hover { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+    </style>
+  </defs>
+  <g id="vpm-plane">
+    <ellipse cx="18" cy="10" rx="3" ry="6" fill="var(--vp-logo-color,#C4955A)"/>
+    <ellipse cx="18" cy="8" rx="1.5" ry="2" fill="currentColor" opacity="0.4"/>
+    <path d="M15 12 Q8 16 2 14 L3 17 Q10 17 15 15Z" fill="var(--vp-logo-color,#C4955A)"/>
+    <path d="M21 12 Q28 16 34 14 L33 17 Q26 17 21 15Z" fill="var(--vp-logo-color,#C4955A)"/>
+    <rect x="10" y="16" width="6" height="3" rx="1.5" fill="var(--vp-logo-color,#C4955A)" opacity="0.8"/>
+    <rect x="20" y="16" width="6" height="3" rx="1.5" fill="var(--vp-logo-color,#C4955A)" opacity="0.8"/>
+    <path d="M16 10 L16 5 L18 4 L20 5 L20 10Z" fill="var(--vp-logo-color,#C4955A)" opacity="0.9"/>
+  </g>
+  <text x="42" y="15" font-family="'Sora','Segoe UI',sans-serif" font-weight="900" font-size="10"
+    fill="var(--vp-logo-color,#C4955A)" letter-spacing="1">VIAJANTE.PRO</text>
+  <text x="42" y="24" font-family="'Sora','Segoe UI',sans-serif" font-weight="400" font-size="5"
+    fill="var(--vp-logo-color,#C4955A)" letter-spacing="2.5" opacity="0.7">TRAVEL AGENCY</text>
+</svg></div>
+    <div class="tb-r1">
+      <div style="width:28px;height:28px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 40%,var(--gold) 100%);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;overflow:hidden;">
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.15) 0%,transparent 60%);border-radius:7px"></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="13" height="13" style="position:relative;z-index:1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <span class="tb-wordmark">Viajante Pro</span>
+      <span class="tb-role">Guia Operacional</span>
+      <div class="tb-av" id="tb-av">HN</div>
+    </div>
+    <div class="grp-row" id="grp-row">
+      <button class="grp-btn active" data-g="disney" onclick="G.setGroup('disney',this)">🏰<br>Disney</button>
+      <button class="grp-btn" data-g="paris"  onclick="G.setGroup('paris',this)">🗼<br>Paris</button>
+      <button class="grp-btn" data-g="ces"    onclick="G.setGroup('ces',this)">⚡<br>CES</button>
+      <button class="grp-btn" data-g="japao"  onclick="G.setGroup('japao',this)">🗾<br>Japão</button>
+    </div>
+  </div>
+
+  <!-- PROGRESS STRIP -->
+  <div id="prog-strip">
+    <div class="ps-row">
+      <span class="ps-label" id="ps-label">Check-in do grupo</span>
+      <span class="ps-count" id="ps-count">0/10</span>
+    </div>
+    <div class="ps-bar"><div class="ps-fill" id="ps-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- VIEW ROOT -->
+  <div id="view-root"></div>
+  <!-- hidden view container for passengers tab -->
+  <div id="view-passengers-host" style="display:none"></div>
+
+  <!-- TOAST -->
+  <div id="toast-root"></div>
+
+  <!-- BOTTOM NAV -->
+  <nav id="bnav">
+    <button class="nb" data-v="dashboard" onclick="G.nav('dashboard',this)">
+      <span class="nb-ico">📊</span><span class="nb-lbl">Dashboard</span>
+    </button>
+    <button class="nb active" data-v="manifesto" onclick="G.nav('manifesto',this)">
+      <span class="nb-ico">👥</span><span class="nb-lbl">Grupo</span>
+    </button>
+    <button class="nb" data-v="passengers" onclick="G.nav('passengers',this)">
+      <span class="nb-ico">🛂</span><span class="nb-lbl">Passageiros</span>
+    </button>
+    <button class="nb crise-btn" data-v="crise" data-module="sos" onclick="G.nav('crise',this)">
+      <span class="nb-ico">🚨</span><span class="nb-lbl">Crise</span>
+    </button>
+    <button class="nb" data-v="broadcast" data-module="broadcast" onclick="G.nav('broadcast',this)">
+      <span class="nb-ico">📣</span><span class="nb-lbl">Broadcast</span>
+    </button>
+    <button class="nb" data-v="mural" onclick="G.nav('mural',this)">
+      <span class="nb-ico">🖼</span><span class="nb-lbl">Mural</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ✅ SOS EMERGENCY MODAL — aparece em tela cheia quando passageiro ativa SOS -->
+<div id="sos-modal">
+  <div class="sos-modal-ring">🆘</div>
+  <div class="sos-modal-label">Alerta de Emergência · Viajante Pro</div>
+  <div class="sos-modal-title" id="sos-modal-title">EMERGÊNCIA ATIVADA</div>
+  <div class="sos-modal-sub" id="sos-modal-sub">Um passageiro acionou o botão de SOS. Verifique a localização e entre em contato imediatamente.</div>
+  <div class="sos-modal-detail" id="sos-modal-detail">
+    <div class="sos-detail-row">
+      <span class="sos-detail-lbl">Passageiro</span>
+      <span class="sos-detail-val" id="sos-detail-pax">—</span>
+    </div>
+    <div class="sos-detail-row">
+      <span class="sos-detail-lbl">Grupo</span>
+      <span class="sos-detail-val" id="sos-detail-grupo">—</span>
+    </div>
+    <div class="sos-detail-row">
+      <span class="sos-detail-lbl">Hora</span>
+      <span class="sos-detail-val" id="sos-detail-time">—</span>
+    </div>
+    <div class="sos-detail-row">
+      <span class="sos-detail-lbl">ID do Alerta</span>
+      <span class="sos-detail-val" id="sos-detail-id">—</span>
+    </div>
+  </div>
+  <button class="sos-resolve-btn" id="sos-resolve-btn" onclick="VP_SOS.resolve()">
+    ✅ MARCAR COMO RESOLVIDO
+  </button>
+  <button class="sos-dismiss-btn" onclick="VP_SOS.dismiss()">
+    Fechar Temporariamente
+  </button>
+</div>
+
+<script>
+// @ts-nocheck
+const G = {
+  group: 'disney',
+  criseTab: 'form',
+  bcTab: 'poll',
+  criseSev: 'media',
+  ocorrencias: [],
+  pollHistory: [],
+  pushHistory: [],
+  muralPhotos: {},   // key = groupKey, val = array of photo objects
+  pollVotes: {},
+  openPax: {},
+
+  // ── FIRESTORE LIVE DATA ───────────────────────────────────
+  groups: {},             // preenchido via onSnapshot do Firestore
+  _firestoreUnsubs: [],   // cleanup de listeners
+
+  // ── SEED GROUPS — usado APENAS para popular banco vazio ──
+  SEED_GROUPS: {
+    disney: {
+      label: 'Disney World', emoji: '🏰', color: '#1A4080',
+      guide: 'Henrique Neves', initials: 'HN',
+      dest: 'Orlando, FL · EUA', date: '14–22 Fev 2026',
+      pax: [
+        { id:1, name:'Rodrigo Maia',    room:'2214', flight:'LA4058', doc:'BR123456', tags:['💊 Diabético'],        bg:'#1A4080', avatar:'RM' },
+        { id:2, name:'Carla Dumont',    room:'2215', flight:'LA4058', doc:'BR234567', tags:['🥗 Vegetariana'],      bg:'#5B2D8E', avatar:'CD' },
+        { id:3, name:'Felipe Assis',    room:'2216', flight:'LA4058', doc:'BR345678', tags:['♿ Mobilidade','💊 Hipertenso'], bg:'#B8935A', avatar:'FA' },
+        { id:4, name:'André Costa',     room:'2217', flight:'LA4058', doc:'BR456789', tags:[],                      bg:'#1F7A4A', avatar:'AC' },
+        { id:5, name:'Marina Souza',    room:'2218', flight:'LA4058', doc:'BR567890', tags:['🤰 Gestante'],         bg:'#C0392B', avatar:'MS' },
+        { id:6, name:'Pedro Lima',      room:'2219', flight:'LA4059', doc:'BR678901', tags:[],                      bg:'#0E0E0D', avatar:'PL' },
+        { id:7, name:'Carlos Mendes',   room:'2220', flight:'LA4059', doc:'BR789012', tags:['💊 Alérgico'],         bg:'#B5620A', avatar:'CM' },
+        { id:8, name:'Isabela Ramos',   room:'2221', flight:'LA4059', doc:'BR890123', tags:[],                      bg:'#1A4080', avatar:'IR' },
+        { id:9, name:'Lucas Freitas',   room:'2222', flight:'LA4059', doc:'BR901234', tags:['👶 Criança 8a'],       bg:'#5B2D8E', avatar:'LF' },
+        { id:10,name:'Beatriz Alves',   room:'2223', flight:'LA4059', doc:'BR012345', tags:['💊 Asma'],             bg:'#1F7A4A', avatar:'BA' },
+      ],
+      polls: ['Almoço livre ou restaurante do grupo?','Parque extra: Hollywood Studios ou Epcot?'],
+    },
+    paris: {
+      label: 'Paris França', emoji: '🗼', color: '#5B2D8E',
+      guide: 'Henrique Neves', initials: 'HN',
+      dest: 'Paris · França', date: '08–16 Mar 2026',
+      pax: [
+        { id:1, name:'Gustavo Pereira', room:'410',  flight:'AF443', doc:'BR112233', tags:['💊 Diabético'],       bg:'#5B2D8E', avatar:'GP' },
+        { id:2, name:'Fernanda Lima',   room:'411',  flight:'AF443', doc:'BR223344', tags:[],                     bg:'#1A4080', avatar:'FL' },
+        { id:3, name:'Tiago Castro',    room:'412',  flight:'AF443', doc:'BR334455', tags:['🥗 Vegano'],          bg:'#B8935A', avatar:'TC' },
+        { id:4, name:'Renata Vieira',   room:'413',  flight:'AF443', doc:'BR445566', tags:['♿ Mobilidade'],      bg:'#C0392B', avatar:'RV' },
+        { id:5, name:'Marcus Lopes',    room:'414',  flight:'AF443', doc:'BR556677', tags:[],                     bg:'#1F7A4A', avatar:'ML' },
+        { id:6, name:'Aline Moura',     room:'415',  flight:'AF444', doc:'BR667788', tags:['💊 Hipertensa'],      bg:'#0E0E0D', avatar:'AM' },
+        { id:7, name:'Bruno Santos',    room:'416',  flight:'AF444', doc:'BR778899', tags:[],                     bg:'#B5620A', avatar:'BS' },
+        { id:8, name:'Cintia Lopes',    room:'417',  flight:'AF444', doc:'BR889900', tags:['🤰 Gestante'],        bg:'#1A4080', avatar:'CL' },
+        { id:9, name:'Diego Alves',     room:'418',  flight:'AF444', doc:'BR990011', tags:[],                     bg:'#5B2D8E', avatar:'DA' },
+        { id:10,name:'Elisa Ramos',     room:'419',  flight:'AF444', doc:'BR001122', tags:['💊 Alérgica'],        bg:'#1F7A4A', avatar:'ER' },
+      ],
+      polls: ['Visitar Versalhes ou Museu D\'Orsay amanhã?','Cruzeiro no Sena: tarde ou noite?'],
+    },
+    ces: {
+      label: 'CES Las Vegas', emoji: '⚡', color: '#B8935A',
+      guide: 'Henrique Neves', initials: 'HN',
+      dest: 'Las Vegas, NV · EUA', date: '06–09 Jan 2027',
+      pax: [
+        { id:1, name:'Rodrigo Maia',    room:'1204', flight:'LA8041', doc:'BR123456', tags:[],                     bg:'#B8935A', avatar:'RM' },
+        { id:2, name:'Carla Dumont',    room:'1205', flight:'LA8041', doc:'BR234567', tags:['💊 Diabética'],       bg:'#1A4080', avatar:'CD' },
+        { id:3, name:'Felipe Assis',    room:'1206', flight:'LA8041', doc:'BR345678', tags:[],                     bg:'#1F7A4A', avatar:'FA' },
+        { id:4, name:'André Costa',     room:'1207', flight:'LA8041', doc:'BR456789', tags:['♿ Mobilidade'],      bg:'#C0392B', avatar:'AC' },
+        { id:5, name:'Marina Souza',    room:'1208', flight:'LA8041', doc:'BR567890', tags:[],                     bg:'#5B2D8E', avatar:'MS' },
+        { id:6, name:'Pedro Lima',      room:'1209', flight:'LA8042', doc:'BR678901', tags:['💊 Hipertenso'],      bg:'#0E0E0D', avatar:'PL' },
+        { id:7, name:'Carlos Mendes',   room:'1210', flight:'LA8042', doc:'BR789012', tags:[],                     bg:'#B5620A', avatar:'CM' },
+        { id:8, name:'Isabela Ramos',   room:'1211', flight:'LA8042', doc:'BR890123', tags:['🥗 Vegetariana'],     bg:'#1A4080', avatar:'IR' },
+        { id:9, name:'Lucas Freitas',   room:'1212', flight:'LA8042', doc:'BR901234', tags:[],                     bg:'#5B2D8E', avatar:'LF' },
+        { id:10,name:'Beatriz Alves',   room:'1213', flight:'LA8042', doc:'BR012345', tags:['💊 Asma'],            bg:'#1F7A4A', avatar:'BA' },
+      ],
+      polls: ['Jantar do grupo: Gordon Ramsay ou buffet livre?','Visitar Strip amanhã: manhã ou tarde?'],
+    },
+    japao: {
+      label: 'Japão Cultural', emoji: '🗾', color: '#C0392B',
+      guide: 'Henrique Neves', initials: 'HN',
+      dest: 'Tóquio & Quioto · Japão', date: '02–14 Abr 2026',
+      pax: [
+        { id:1, name:'Gustavo Pereira', room:'801',  flight:'JL46', doc:'BR112233', tags:['💊 Diabético'],        bg:'#C0392B', avatar:'GP' },
+        { id:2, name:'Fernanda Lima',   room:'802',  flight:'JL46', doc:'BR223344', tags:[],                      bg:'#1A4080', avatar:'FL' },
+        { id:3, name:'Tiago Castro',    room:'803',  flight:'JL46', doc:'BR334455', tags:['🥗 Vegano'],           bg:'#B8935A', avatar:'TC' },
+        { id:4, name:'Renata Vieira',   room:'804',  flight:'JL46', doc:'BR445566', tags:[],                      bg:'#5B2D8E', avatar:'RV' },
+        { id:5, name:'Marcus Lopes',    room:'805',  flight:'JL46', doc:'BR556677', tags:['♿ Mobilidade'],       bg:'#1F7A4A', avatar:'ML' },
+        { id:6, name:'Aline Moura',     room:'806',  flight:'JL47', doc:'BR667788', tags:['💊 Alérgica'],         bg:'#0E0E0D', avatar:'AM' },
+        { id:7, name:'Bruno Santos',    room:'807',  flight:'JL47', doc:'BR778899', tags:[],                      bg:'#B5620A', avatar:'BS' },
+        { id:8, name:'Cintia Lopes',    room:'808',  flight:'JL47', doc:'BR889900', tags:['👶 Criança 6a'],       bg:'#1A4080', avatar:'CL' },
+        { id:9, name:'Diego Alves',     room:'809',  flight:'JL47', doc:'BR990011', tags:[],                      bg:'#5B2D8E', avatar:'DA' },
+        { id:10,name:'Elisa Ramos',     room:'810',  flight:'JL47', doc:'BR001122', tags:['💊 Hipertensa'],       bg:'#1F7A4A', avatar:'ER' },
+      ],
+      polls: ['Templo de Fushimi Inari: manhã ou tarde?','Ramen ou Sushi no jantar coletivo?'],
+    },
+  }, // fim SEED_GROUPS
+
+  // per-group checkin state (cache local, Firestore é a fonte da verdade)
+  checkinState: { disney:{}, paris:{}, ces:{}, japao:{} },
+
+  // per-group mural
+  muralState: {
+    disney: [
+      { id:'d1', sender:'Rodrigo M.', emoji:'🎡', caption:'Primeiros passos no Magic Kingdom!', status:'pending' },
+      { id:'d2', sender:'Carla D.',   emoji:'🏰', caption:'O castelo de pertinho 😍',           status:'pending' },
+      { id:'d3', sender:'Felipe A.',  emoji:'🎢', caption:'Espaço Mountain foi incrível!',       status:'approved' },
+    ],
+    paris: [
+      { id:'p1', sender:'Fernanda L.', emoji:'🗼', caption:'Torre Eiffel ao pôr do sol!',        status:'pending' },
+      { id:'p2', sender:'Tiago C.',    emoji:'🥐', caption:'Croissant da manhã em Saint-Germain', status:'pending' },
+      { id:'p3', sender:'Renata V.',   emoji:'🎨', caption:'Louvre foi de outro mundo',           status:'approved' },
+    ],
+    ces: [
+      { id:'c1', sender:'André C.',    emoji:'🤖', caption:'AI robots na Central Hall!',          status:'pending' },
+      { id:'c2', sender:'Marina S.',   emoji:'💻', caption:'O futuro chegou na Samsung!',         status:'approved' },
+      { id:'c3', sender:'Carlos M.',   emoji:'🚗', caption:'Carro voador da Toyota',              status:'pending' },
+    ],
+    japao: [
+      { id:'j1', sender:'Gustavo P.',  emoji:'⛩', caption:'Fushimi Inari ao amanhecer',          status:'pending' },
+      { id:'j2', sender:'Marcus L.',   emoji:'🌸', caption:'Cerejeiras em Maruyama Park',         status:'pending' },
+      { id:'j3', sender:'Aline M.',    emoji:'🍜', caption:'Ramen às 23h em Shinjuku',            status:'approved' },
+    ],
+  },
+
+  // ── INIT ──────────────────────────────────────────────────
+  init() {
+    setInterval(() => {
+      const el = document.getElementById('sbar-time');
+      if (el) el.textContent = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    }, 1000);
+    document.getElementById('sbar-time').textContent = this._now();
+
+    // Pré-carrega SEED como fallback imediato (torna UI responsiva antes do Firestore)
+    ['disney','paris','ces','japao'].forEach(k => {
+      this.groups[k] = JSON.parse(JSON.stringify(this.SEED_GROUPS[k]));
+    });
+
+    this.setGroup('disney', document.querySelector('.grp-btn[data-g="disney"]'));
+    this.nav('manifesto', document.querySelector('.nb[data-v="manifesto"]'));
+
+    // Inicia integração Firestore após DOM pronto
+    this._startFirestore();
+  },
+
+  // ── FIRESTORE BOOTSTRAP ───────────────────────────────────
+  _startFirestore() {
+    const _try = () => {
+      if (typeof NEXIA === 'undefined' || !NEXIA._ready || !NEXIA.db) {
+        setTimeout(_try, 600); return;
+      }
+      const db        = NEXIA.db;
+      const tenantRef = db.collection('tenants').doc('VP_AGENCIA_01');
+
+      // ── 1 & 2. MANIFESTO: onSnapshot de passengers por grupo ─────
+      // Para cada grupo, escuta a subcoleção passengers e faz self-seed se vazia
+      ['disney','paris','ces','japao'].forEach(groupKey => {
+        const paxCol = tenantRef.collection('trips').doc(groupKey).collection('passengers');
+        const unsub = paxCol.onSnapshot(snap => {
+          if (snap.empty) {
+            // ── Self-Seeding via batch ──────────────────────────────
+            const seedPax = this.SEED_GROUPS[groupKey]?.pax || [];
+            if (seedPax.length === 0) return;
+            const batch = db.batch();
+            seedPax.forEach(p => {
+              batch.set(paxCol.doc(String(p.id)), {
+                ...p,
+                checkinStatus: 'pending',
+                _seeded:       true,
+                _seededAt:     new Date(),
+              });
+            });
+            batch.commit().catch(e => console.warn('[Seed passengers ' + groupKey + ']', e));
+            // Mantém SEED local enquanto batch processa
+            if (!this.groups[groupKey]) {
+              this.groups[groupKey] = JSON.parse(JSON.stringify(this.SEED_GROUPS[groupKey]));
+            }
+          } else {
+            // ── Popula groups[groupKey].pax do Firestore ────────────
+            const paxFromFS = snap.docs.map(d => {
+              const data = d.data();
+              return {
+                id:            parseInt(d.id) || d.id,
+                name:          data.name          || '',
+                room:          data.room          || '',
+                flight:        data.flight        || '',
+                doc:           data.doc           || '',
+                tags:          data.tags          || [],
+                bg:            data.bg            || '#0E0E0D',
+                avatar:        data.avatar        || '',
+                checkinStatus: data.checkinStatus || 'pending',
+                sos:           data.sos           || false,
+              };
+            });
+            // Garante que o grupo existe antes de atribuir pax
+            if (!this.groups[groupKey]) {
+              this.groups[groupKey] = JSON.parse(JSON.stringify(this.SEED_GROUPS[groupKey] || {}));
+            }
+            this.groups[groupKey].pax = paxFromFS;
+
+            // Sincroniza checkinState local com Firestore
+            this.checkinState[groupKey] = {};
+            paxFromFS.forEach(p => {
+              this.checkinState[groupKey][p.id] = p.checkinStatus === 'checkedin';
+            });
+
+            // Re-renderiza se for o grupo atual
+            if (groupKey === this.group) {
+              this._updateProgress();
+              if (this.currentView === 'manifesto') {
+                this.nav('manifesto', document.querySelector('.nb[data-v="manifesto"]'));
+              }
+            }
+          }
+        }, err => console.warn('[Passengers onSnapshot ' + groupKey + ']', err));
+        this._firestoreUnsubs.push(unsub);
+      });
+
+      // ── 5. MURAL: onSnapshot por grupo ─────────────────────
+      ['disney','paris','ces','japao'].forEach(groupKey => {
+        const muralCol = tenantRef.collection('trips').doc(groupKey).collection('mural');
+        const unsub = muralCol.orderBy('createdAt','desc').onSnapshot(snap => {
+          if (snap.empty) {
+            // Self-seed mural com fotos do SEED
+            const seedPhotos = this.muralState[groupKey] || [];
+            if (seedPhotos.length > 0) {
+              const batch = db.batch();
+              seedPhotos.forEach(p => {
+                batch.set(muralCol.doc(p.id), {
+                  ...p,
+                  createdAt: new Date(),
+                  _seeded:   true,
+                });
+              });
+              batch.commit().catch(e => console.warn('[Seed mural ' + groupKey + ']', e));
+            }
+          } else {
+            // Dados reais do Firestore
+            this.muralState[groupKey] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            if (groupKey === this.group && this.currentView === 'mural') {
+              this.nav('mural', document.querySelector('.nb[data-v="mural"]'));
+            }
+          }
+        }, err => console.warn('[Mural onSnapshot ' + groupKey + ']', err));
+        this._firestoreUnsubs.push(unsub);
+      });
+
+      // ── VP_PASSENGERS e VP_SOS já têm seus próprios listeners ──
+      // São inicializados via initGuideFirebase()
+      window._vpGuideDb = db;
+      if (typeof VP_SOS       !== 'undefined') VP_SOS.startListener();
+      if (typeof VP_PASSENGERS !== 'undefined') VP_PASSENGERS.startListener();
+      if (typeof VP_THEME      !== 'undefined') VP_THEME.startListener();
+      if (typeof VP_MODULES    !== 'undefined') VP_MODULES.startListener();
+    };
+    _try();
+  },
+
+  // ── GROUP SELECT ──────────────────────────────────────────
+  setGroup(key, btn) {
+    this.group = key;
+    document.querySelectorAll('.grp-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    const grp = this.groups[key];
+    document.getElementById('tb-av').textContent = grp.initials;
+    this._updateProgress();
+    if (this.currentView) this.nav(this.currentView);
+    this.toast('🗂 Grupo: ' + grp.label);
+  },
+
+  _updateProgress() {
+    const grp = this.groups[this.group];
+    const state = this.checkinState[this.group];
+    const done = grp.pax.filter(p => state[p.id]).length;
+    const total = grp.pax.length;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('ps-count').textContent = done + '/' + total;
+    document.getElementById('ps-fill').style.width = pct + '%';
+    document.getElementById('ps-label').textContent = 'Check-in · ' + this.groups[this.group].label;
+  },
+
+  // ── NAV ───────────────────────────────────────────────────
+  currentView: 'manifesto',
+  nav(v, btn) {
+    this.currentView = v;
+    document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    else document.querySelector(`.nb[data-v="${v}"]`)?.classList.add('active');
+    const root = document.getElementById('view-root');
+    root.innerHTML = '';
+    root.scrollTop = 0;
+    const wrap = document.createElement('div');
+    wrap.className = 'view-enter';
+    root.appendChild(wrap);
+    this['render_' + v]?.(wrap);
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // MANIFESTO
+  // ══════════════════════════════════════════════════════════
+  render_manifesto(el) {
+    const grp = this.groups[this.group];
+    const state = this.checkinState[this.group];
+    // Guard: se dados não carregaram ainda, mostra skeleton
+    if (!grp || !grp.pax) {
+      el.innerHTML = `
+        <div class="sec" style="padding:20px 0">
+          <div style="height:18px;width:160px;border-radius:6px;margin-bottom:12px;background:linear-gradient(90deg,rgba(0,0,0,.06) 0%,rgba(0,0,0,.12) 50%,rgba(0,0,0,.06) 100%);background-size:200% 100%;animation:skeletonPulse 1.5s ease infinite"></div>
+          <div style="height:14px;width:220px;border-radius:6px;margin-bottom:8px;background:linear-gradient(90deg,rgba(0,0,0,.06) 0%,rgba(0,0,0,.12) 50%,rgba(0,0,0,.06) 100%);background-size:200% 100%;animation:skeletonPulse 1.5s ease infinite 0.2s"></div>
+          <div style="height:14px;width:180px;border-radius:6px;background:linear-gradient(90deg,rgba(0,0,0,.06) 0%,rgba(0,0,0,.12) 50%,rgba(0,0,0,.06) 100%);background-size:200% 100%;animation:skeletonPulse 1.5s ease infinite 0.4s"></div>
+          <style>@keyframes skeletonPulse{0%{background-position:200% 0}100%{background-position:-200% 0}}</style>
+          <p style="color:var(--ink4,#8A8078);font-size:12px;margin-top:16px">A carregar dados do grupo...</p>
+        </div>`;
+      // Retry após os dados chegarem do Firestore
+      setTimeout(() => {
+        if (this.currentView === 'manifesto') {
+          const root = document.getElementById('view-root');
+          if (root) { const w = root.querySelector('div'); if (w) this.render_manifesto(w); }
+        }
+      }, 1200);
+      return;
+    }
+    const done = grp.pax.filter(p => state[p.id]).length;
+    const allDone = done === grp.pax.length;
+
+    el.innerHTML = `
+      <div class="sec" style="padding-bottom:10px">
+        <div class="eyebrow" style="margin-bottom:4px">Manifesto Offline</div>
+        <div style="font-family:var(--ffs);font-size:1.45rem;color:var(--ink);margin-bottom:2px">${grp.emoji} ${grp.label}</div>
+        <div style="font-family:var(--ff);font-size:9.5px;font-weight:300;color:var(--ink4)">${grp.dest} · ${grp.date}</div>
+      </div>
+
+      <button class="mega-btn ${allDone ? 'done' : ''}" id="mega-btn" onclick="G.checkInAll()">
+        <span class="mega-ico">${allDone ? '✅' : '🚌'}</span>
+        <div>
+          <div class="mega-label">${allDone ? 'Todos Embarcados!' : 'Embarcar Todos'}</div>
+          <div class="mega-sub">${allDone ? done + '/' + grp.pax.length + ' passageiros confirmados' : 'Check-in coletivo instantâneo · ' + (grp.pax.length - done) + ' pendentes'}</div>
+        </div>
+      </button>
+
+      <div style="padding:0 20px 10px;display:flex;justify-content:space-between;align-items:center">
+        <span class="eyebrow">${grp.pax.length} Passageiros</span>
+        <button onclick="G.resetCheckin()" style="padding:3px 10px;border:1px solid var(--brd);background:none;font-family:var(--ff);font-size:7px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink5);cursor:pointer">Resetar</button>
+      </div>
+
+      <div style="padding:0 20px 20px">
+        ${grp.pax.map(p => this._paxCard(p)).join('')}
+      </div>
+    `;
+  },
+
+  _paxCard(p) {
+    const state = this.checkinState[this.group];
+    const checked = !!state[p.id];
+    const isOpen = !!this.openPax[this.group + '_' + p.id];
+    const hasSOS = p.sos;
+    return `
+      <div class="manifest-item ${checked ? 'checked-in' : ''} ${hasSOS ? 'sos' : ''} ${isOpen ? 'open' : ''}" id="pax-${this.group}-${p.id}">
+        <div class="mi-header" onclick="G.togglePax(${p.id})">
+          <span class="mi-num">${String(p.id).padStart(2,'0')}</span>
+          <div class="mi-av" style="background:${p.bg};color:#FFF">${p.avatar}</div>
+          <div class="mi-info">
+            <div class="mi-name">${p.name}</div>
+            <div class="mi-tags">
+              ${p.tags.map(t => `<span class="pill pill-amb" style="font-size:6.5px">${t}</span>`).join('')}
+              ${hasSOS ? `<span class="pill pill-red">🆘 SOS</span>` : ''}
+              ${checked ? `<span class="pill pill-grn">✓ Embarcou</span>` : ''}
+            </div>
+          </div>
+          <span class="mi-status">${checked ? '✅' : '⬜'}</span>
+          <span class="mi-chevron">▾</span>
+        </div>
+        <div class="mi-body">
+          <div class="mi-body-grid">
+            <div><div class="mi-field-lbl">Quarto</div><div class="mi-field-val">${p.room}</div></div>
+            <div><div class="mi-field-lbl">Voo</div><div class="mi-field-val">${p.flight}</div></div>
+            <div><div class="mi-field-lbl">Documento</div><div class="mi-field-val">${p.doc}</div></div>
+            <div><div class="mi-field-lbl">Riscos</div><div class="mi-field-val">${p.tags.length > 0 ? p.tags.join(', ') : '—'}</div></div>
+          </div>
+          <div class="mi-actions">
+            <button class="mi-btn ${checked ? '' : 'grn-btn'}" onclick="G.toggleCheckin(${p.id})">${checked ? '↩ Desfazer' : '✓ Check-in'}</button>
+            <button class="mi-btn" onclick="G.toast('📞 Ligando para ${p.name}...')">📞 Ligar</button>
+            <button class="mi-btn red-btn" onclick="G.openCriseFor('${p.name}')">🚨 Ocor.</button>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  togglePax(id) {
+    const key = this.group + '_' + id;
+    this.openPax[key] = !this.openPax[key];
+    this.render_manifesto(document.querySelector('#view-root > div'));
+  },
+
+  toggleCheckin(id) {
+    const state   = this.checkinState[this.group];
+    const newVal  = !state[id];
+    state[id]     = newVal;
+    const grp     = this.groups[this.group];
+    const p       = grp.pax.find(x => x.id === id);
+    if (!p) return;
+    const newStatus = newVal ? 'checkedin' : 'pending';
+
+    // ── 3. Check-in real: .update() no Firestore ──────────────────
+    const _tryUpdate = () => {
+      if (typeof NEXIA !== 'undefined' && NEXIA._ready && NEXIA.db) {
+        NEXIA.db.collection('tenants').doc('VP_AGENCIA_01')
+          .collection('trips').doc(this.group)
+          .collection('passengers').doc(String(id))
+          .update({
+            checkinStatus: newStatus,
+            checkinAt:     newStatus === 'checkedin'
+                             ? firebase.firestore.FieldValue.serverTimestamp()
+                             : null,
+            checkinBy: 'guia',
+          })
+          .catch(e => console.warn('[toggleCheckin] Firestore error:', e));
+      }
+    };
+    _tryUpdate();
+
+    this._updateProgress();
+    this.toast(newVal ? '✅ ' + p.name + ' embarcou' : '↩ ' + p.name + ' removido', 'grn');
+    this.render_manifesto(document.querySelector('#view-root > div'));
+  },
+
+  checkInAll() {
+    const grp     = this.groups[this.group];
+    const state   = this.checkinState[this.group];
+    const allDone = grp.pax.every(p => state[p.id]);
+    if (allDone) { this.toast('✅ Todos já embarcados!', 'grn'); return; }
+    const btn = document.getElementById('mega-btn');
+    if (btn) { btn.classList.add('loading'); btn.querySelector('.mega-label').textContent = 'Processando…'; }
+
+    // ── 3. Embarcar Todos: batch .update() no Firestore ───────────
+    const pending = grp.pax.filter(p => !state[p.id]);
+    const _tryBatch = () => {
+      if (typeof NEXIA !== 'undefined' && NEXIA._ready && NEXIA.db) {
+        const db       = NEXIA.db;
+        const paxColRef = db.collection('tenants').doc('VP_AGENCIA_01')
+                           .collection('trips').doc(this.group)
+                           .collection('passengers');
+        // Firestore max 500/batch — dividir se necessário
+        const chunks = [];
+        for (let i = 0; i < pending.length; i += 400) chunks.push(pending.slice(i, i + 400));
+        chunks.forEach(chunk => {
+          const batch = db.batch();
+          chunk.forEach(p => {
+            batch.update(paxColRef.doc(String(p.id)), {
+              checkinStatus: 'checkedin',
+              checkinAt:     firebase.firestore.FieldValue.serverTimestamp(),
+              checkinBy:     'guia_bulk',
+            });
+          });
+          batch.commit().catch(e => console.warn('[checkInAll batch]', e));
+        });
+      }
+    };
+
+    // Atualiza estado local com animação progressiva
+    let i = 0;
+    const tick = () => {
+      if (i >= grp.pax.length) {
+        this._updateProgress();
+        this.render_manifesto(document.querySelector('#view-root > div'));
+        this.toast('✅ ' + grp.pax.length + ' passageiros embarcados!', 'grn');
+        _tryBatch();
+        return;
+      }
+      state[grp.pax[i].id] = true;
+      i++;
+      this._updateProgress();
+      setTimeout(tick, 80);
+    };
+    setTimeout(tick, 400);
+  },
+
+  resetCheckin() {
+    this.checkinState[this.group] = {};
+    this._updateProgress();
+    this.render_manifesto(document.querySelector('#view-root > div'));
+    this.toast('↩ Check-ins resetados');
+  },
+
+  openCriseFor(name) {
+    this.nav('crise', document.querySelector('.nb[data-v="crise"]'));
+    setTimeout(() => {
+      const inp = document.getElementById('crise-pax-inp');
+      if (inp) { inp.value = name; }
+    }, 100);
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // CRISE
+  // ══════════════════════════════════════════════════════════
+  render_crise(el) {
+    el.innerHTML = `
+      <div class="crise-tabs">
+        <button class="ctab ${this.criseTab === 'form' ? 'active' : ''}" onclick="G.setCriseTab('form')">Nova Ocorrência</button>
+        <button class="ctab ${this.criseTab === 'hist' ? 'active' : ''}" onclick="G.setCriseTab('hist')">Histórico <span id="oc-badge" style="font-family:var(--ffm);font-size:9px;background:var(--rd2);color:var(--red);padding:1px 6px;margin-left:4px">${this.ocorrencias.length}</span></button>
+      </div>
+      <div id="crise-body"></div>
+    `;
+    this._renderCriseBody();
+  },
+
+  setCriseTab(t) {
+    this.criseTab = t;
+    document.querySelectorAll('.ctab').forEach(b => b.classList.toggle('active', (t === 'form' && b.textContent.includes('Nova')) || (t === 'hist' && b.textContent.includes('Hist'))));
+    this._renderCriseBody();
+  },
+
+  _renderCriseBody() {
+    const body = document.getElementById('crise-body');
+    if (!body) return;
+    if (this.criseTab === 'form') this._renderCriseForm(body);
+    else this._renderCriseHist(body);
+  },
+
+  _renderCriseForm(body) {
+    const grp = this.groups[this.group];
+    body.innerHTML = `
+      <div class="crise-form">
+        <div class="eyebrow" style="margin-bottom:14px">Triagem Rápida · ${grp.emoji} ${grp.label}</div>
+
+        <div style="margin-bottom:18px">
+          <label class="f-lbl">Tipo de Ocorrência</label>
+          <select class="f-sel" id="crise-tipo">
+            <option value="documento">📄 Perda de Documento</option>
+            <option value="saude">🩺 Saúde / Emergência Médica</option>
+            <option value="atraso">⏰ Atraso / Ausência</option>
+            <option value="extravio">🧳 Extravio de Bagagem</option>
+            <option value="outro">❓ Outro</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:18px">
+          <label class="f-lbl">Passageiro Envolvido</label>
+          <select class="f-sel" id="crise-pax-inp">
+            <option value="">— Selecionar —</option>
+            ${grp.pax.map(p => `<option value="${p.name}">${p.name}</option>`).join('')}
+            <option value="Grupo todo">Grupo todo</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:18px">
+          <label class="f-lbl">Severidade</label>
+          <div class="sev-row">
+            <button class="sev-btn ${this.criseSev === 'baixa' ? 'active' : ''}" data-s="baixa" onclick="G.setSev('baixa')">🟢 Baixa</button>
+            <button class="sev-btn ${this.criseSev === 'media' ? 'active' : ''}" data-s="media" onclick="G.setSev('media')">🟡 Média</button>
+            <button class="sev-btn ${this.criseSev === 'critica' ? 'active' : ''}" data-s="critica" onclick="G.setSev('critica')">🔴 Crítica</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:20px">
+          <label class="f-lbl">Descrição</label>
+          <textarea class="f-ta" id="crise-desc" placeholder="Descreva o ocorrido com detalhes..."></textarea>
+        </div>
+
+        <button class="btn-blk red" onclick="G.submitCrise()">🚨 Registrar Ocorrência</button>
+        ${this.criseSev === 'critica' ? `
+          <button class="btn-blk" style="margin-top:8px;background:var(--amb)" onclick="G.toast('📞 Central de emergência acionada!')">📞 Acionar Central VP</button>
+        ` : ''}
+      </div>
+    `;
+  },
+
+  setSev(s) {
+    this.criseSev = s;
+    document.querySelectorAll('.sev-btn').forEach(b => b.classList.toggle('active', b.dataset.s === s));
+    if (s === 'critica') {
+      const form = document.getElementById('crise-body');
+      if (form) {
+        let extra = document.getElementById('crise-critica-extra');
+        if (!extra) {
+          const btn = document.createElement('button');
+          btn.id = 'crise-critica-extra';
+          btn.className = 'btn-blk';
+          btn.style = 'margin-top:8px;background:var(--amb)';
+          btn.textContent = '📞 Acionar Central VP';
+          btn.onclick = () => G.toast('📞 Central de emergência acionada!');
+          const regBtn = form.querySelector('.btn-blk.red');
+          if (regBtn) regBtn.after(btn);
+        }
+      }
+    }
+  },
+
+  submitCrise() {
+    const tipo = document.getElementById('crise-tipo')?.value;
+    const pax  = document.getElementById('crise-pax-inp')?.value;
+    const desc = document.getElementById('crise-desc')?.value?.trim();
+    if (!pax)  { this.toast('⚠️ Selecione o passageiro'); return; }
+    if (!desc) { this.toast('⚠️ Descreva a ocorrência'); return; }
+    const tipoLabels = { documento:'📄 Perda de Documento', saude:'🩺 Emergência Médica', atraso:'⏰ Atraso', extravio:'🧳 Extravio', outro:'❓ Outro' };
+    this.ocorrencias.unshift({ tipo: tipoLabels[tipo] || tipo, pax, sev: this.criseSev, desc, ts: this._now(), grupo: this.groups[this.group].label });
+    this.criseTab = 'hist';
+    this.render_crise(document.querySelector('#view-root > div'));
+    const sevMsg = { baixa:'Baixa', media:'Média', critica:'CRÍTICA' };
+    this.toast('🚨 Ocorrência [' + sevMsg[this.criseSev] + '] registrada', this.criseSev === 'critica' ? 'red' : '');
+  },
+
+  _renderCriseHist(body) {
+    if (this.ocorrencias.length === 0) {
+      body.innerHTML = `<div style="padding:40px 20px;text-align:center;font-family:var(--ff);font-size:9.5px;font-weight:300;color:var(--ink5)">Nenhuma ocorrência registrada ✓</div>`;
+      return;
+    }
+    body.innerHTML = `<div class="ocorrencias-list">` +
+      this.ocorrencias.map(o => `
+        <div class="ocorrencia-card" data-s="${o.sev}">
+          <div class="oc-head">
+            <span class="oc-tipo">${o.tipo}</span>
+            <span class="oc-ts">${o.ts}</span>
+          </div>
+          <div class="oc-pass">${o.grupo} · ${o.pax}</div>
+          <div style="margin-bottom:4px">
+            <span class="pill ${o.sev === 'baixa' ? 'pill-grn' : o.sev === 'media' ? 'pill-amb' : 'pill-red'}">${o.sev.toUpperCase()}</span>
+          </div>
+          <div class="oc-desc">${o.desc}</div>
+        </div>
+      `).join('') + `</div><div style="height:16px"></div>`;
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // BROADCAST
+  // ══════════════════════════════════════════════════════════
+  render_broadcast(el) {
+    el.innerHTML = `
+      <div class="bc-tabs">
+        <button class="bctab ${this.bcTab === 'poll' ? 'active' : ''}" onclick="G.setBcTab('poll')">📊 Enquete</button>
+        <button class="bctab ${this.bcTab === 'push' ? 'active' : ''}" onclick="G.setBcTab('push')">📣 Push</button>
+      </div>
+      <div id="bc-body"></div>
+    `;
+    this._renderBcBody();
+  },
+
+  setBcTab(t) {
+    this.bcTab = t;
+    document.querySelectorAll('.bctab').forEach(b => b.classList.toggle('active', (t === 'poll' && b.textContent.includes('Enquete')) || (t === 'push' && b.textContent.includes('Push'))));
+    this._renderBcBody();
+  },
+
+  _renderBcBody() {
+    const body = document.getElementById('bc-body');
+    if (!body) return;
+    if (this.bcTab === 'poll') this._renderPoll(body);
+    else this._renderPush(body);
+  },
+
+  _renderPoll(body) {
+    const grp = this.groups[this.group];
+    const suggestions = grp.polls;
+    const pk = this.group;
+    if (!this.pollVotes[pk]) this.pollVotes[pk] = null;
+    const hasVotes = !!this.pollVotes[pk];
+
+    body.innerHTML = `
+      <div style="padding:18px 20px 0">
+        <div class="eyebrow" style="margin-bottom:12px">Nova Enquete · ${grp.emoji} ${grp.label}</div>
+
+        <div style="margin-bottom:14px">
+          <label class="f-lbl">Pergunta</label>
+          <input class="f-inp" id="poll-q" placeholder="Ex: Almoço livre ou restaurante?" value="${suggestions[0]}">
+        </div>
+        <div style="margin-bottom:10px">
+          <label class="f-lbl">Opção A</label>
+          <input class="f-inp" id="poll-a" placeholder="Opção A" value="Restaurante do grupo 🍽">
+        </div>
+        <div style="margin-bottom:18px">
+          <label class="f-lbl">Opção B</label>
+          <input class="f-inp" id="poll-b" placeholder="Opção B" value="Almoço livre 🗺">
+        </div>
+
+        <div class="poll-preview">
+          <div class="pp-lbl">Preview · Aparece no app dos passageiros</div>
+          <div class="pp-q" id="pp-q">${suggestions[0]}</div>
+          <div class="pp-opts">
+            <div class="pp-opt" id="pp-a">Restaurante do grupo 🍽</div>
+            <div class="pp-opt" id="pp-b">Almoço livre 🗺</div>
+          </div>
+        </div>
+
+        <button class="btn-blk gold" style="margin-bottom:${hasVotes ? '14px' : '20px'}" onclick="G.sendPoll()">📊 Enviar Enquete para Grupo</button>
+
+        ${hasVotes ? `
+          <div class="eyebrow" style="margin-bottom:10px">Resultado Simulado</div>
+          <div class="poll-results">
+            <div class="pr-row">
+              <span class="pr-lbl" id="res-a-lbl">Restaurante do grupo 🍽</span>
+              <div class="pr-bar"><div class="pr-fill" style="width:${this.pollVotes[pk].a}%"></div></div>
+              <span class="pr-n">${this.pollVotes[pk].a}%</span>
+            </div>
+            <div class="pr-row">
+              <span class="pr-lbl" id="res-b-lbl">Almoço livre 🗺</span>
+              <div class="pr-bar"><div class="pr-fill" style="width:${this.pollVotes[pk].b}%;background:var(--ink3)"></div></div>
+              <span class="pr-n">${this.pollVotes[pk].b}%</span>
+            </div>
+          </div>
+        ` : ''}
+
+        ${this.pollHistory.filter(h => h.grupo === pk).length > 0 ? `
+          <div class="eyebrow" style="margin-top:20px;margin-bottom:10px">Enviadas Anteriormente</div>
+          ${this.pollHistory.filter(h => h.grupo === pk).slice(0,3).map(h => `
+            <div style="padding:10px 0;border-bottom:1px solid var(--brd)">
+              <div style="font-family:var(--ff);font-size:11.5px;font-weight:400;color:var(--ink)">${h.q}</div>
+              <div style="font-family:var(--ffm);font-size:8.5px;color:var(--ink5);margin-top:2px">${h.ts} · 10 respostas</div>
+            </div>
+          `).join('')}
+        ` : ''}
+
+        <div style="height:16px"></div>
+      </div>
+    `;
+
+    // live preview bindings
+    const liveUpdate = () => {
+      const q = document.getElementById('poll-q')?.value;
+      const a = document.getElementById('poll-a')?.value;
+      const b = document.getElementById('poll-b')?.value;
+      if (document.getElementById('pp-q')) document.getElementById('pp-q').textContent = q || '—';
+      if (document.getElementById('pp-a')) document.getElementById('pp-a').textContent = a || '—';
+      if (document.getElementById('pp-b')) document.getElementById('pp-b').textContent = b || '—';
+    };
+    ['poll-q','poll-a','poll-b'].forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('input', liveUpdate); });
+  },
+
+  sendPoll() {
+    const q = document.getElementById('poll-q')?.value?.trim();
+    const a = document.getElementById('poll-a')?.value?.trim();
+    const b = document.getElementById('poll-b')?.value?.trim();
+    if (!q || !a || !b) { this.toast('⚠️ Preencha todos os campos'); return; }
+    const pk = this.group;
+    this.pollHistory.unshift({ q, a, b, ts: this._now(), grupo: pk });
+    // Initialize with 0 votes — passengers vote via their app (Firestore)
+    this.pollVotes[pk] = { a: 0, b: 0 };
+    // Save poll to Firestore so passenger app can receive and vote
+    if (window.db) {
+      window.db.collection('tenants').doc('VP_AGENCIA_01')
+        .collection('polls').add({
+          question: q, optionA: a, optionB: b,
+          group: pk, votesA: 0, votesB: 0,
+          createdAt: new Date().toISOString(),
+          createdBy: 'guide'
+        }).catch(() => {});
+    }
+    this.toast('📊 Enquete enviada para ' + (this.groups[this.group]?.pax?.length || 0) + ' passageiros!');
+    this._renderBcBody();
+  },
+
+  _renderPush(body) {
+    const grp = this.groups[this.group];
+    body.innerHTML = `
+      <div style="padding:18px 20px 0">
+        <div class="eyebrow" style="margin-bottom:12px">Push Notification · ${grp.emoji} ${grp.label}</div>
+
+        <div style="margin-bottom:14px">
+          <label class="f-lbl">Título</label>
+          <input class="f-inp" id="push-title" placeholder="Ex: Reunião no lobby" maxlength="60" oninput="G._pushLive()">
+          <div style="font-family:var(--ffm);font-size:8px;color:var(--ink5);text-align:right;margin-top:4px" id="push-title-c">0/60</div>
+        </div>
+        <div style="margin-bottom:18px">
+          <label class="f-lbl">Mensagem</label>
+          <textarea class="f-ta" id="push-body" placeholder="Corpo da notificação..." maxlength="140" style="min-height:70px" oninput="G._pushLive()"></textarea>
+          <div style="font-family:var(--ffm);font-size:8px;color:var(--ink5);text-align:right;margin-top:4px" id="push-body-c">0/140</div>
+        </div>
+
+        <div class="push-preview">
+          <div class="pu-app">VIAJANTE PRO — ${grp.label.toUpperCase()}</div>
+          <div class="pu-title" id="pu-title-prev">Título aqui</div>
+          <div class="pu-body" id="pu-body-prev">Mensagem para o grupo aparece aqui.</div>
+        </div>
+
+        <div style="padding:10px 14px;background:var(--bg2);border:1px solid var(--brd);margin-bottom:14px;display:flex;align-items:center;gap:9px">
+          <span style="font-size:14px">👥</span>
+          <span style="font-family:var(--ff);font-size:10.5px;font-weight:400;color:var(--ink3)">Enviar para ${grp.pax.length} passageiros · ${grp.label}</span>
+        </div>
+
+        <button class="btn-blk" style="margin-bottom:20px" onclick="G.sendPush()">📣 Enviar Push Agora</button>
+
+        ${this.pushHistory.filter(h => h.grupo === this.group).length > 0 ? `
+          <div class="eyebrow" style="margin-bottom:10px">Histórico de Envios</div>
+          ${this.pushHistory.filter(h => h.grupo === this.group).slice(0,5).map(h => `
+            <div class="push-hist-item">
+              <div class="phi-head"><span class="phi-title">${h.title}</span><span class="phi-ts">${h.ts}</span></div>
+              <div class="phi-body">${h.body}</div>
+              <span class="pill pill-grn">✓ Enviado · ${grp.pax.length} pessoas</span>
+            </div>
+          `).join('')}
+        ` : ''}
+
+        <div style="height:16px"></div>
+      </div>
+    `;
+  },
+
+  _pushLive() {
+    const t = document.getElementById('push-title')?.value || '';
+    const b = document.getElementById('push-body')?.value  || '';
+    const tc = document.getElementById('push-title-c');
+    const bc = document.getElementById('push-body-c');
+    const tp = document.getElementById('pu-title-prev');
+    const bp = document.getElementById('pu-body-prev');
+    if (tc) tc.textContent = t.length + '/60';
+    if (bc) bc.textContent = b.length + '/140';
+    if (tp) tp.textContent = t || 'Título aqui';
+    if (bp) bp.textContent = b || 'Mensagem para o grupo aparece aqui.';
+  },
+
+  sendPush() {
+    const title = document.getElementById('push-title')?.value?.trim();
+    const body  = document.getElementById('push-body')?.value?.trim();
+    if (!title) { this.toast('⚠️ Adicione um título'); return; }
+    if (!body)  { this.toast('⚠️ Adicione a mensagem'); return; }
+
+    const grp = this.groups[this.group];
+    this.pushHistory.unshift({ title, body, ts: this._now(), grupo: this.group });
+
+    // ── 6. Push: .add() real na coleção notifications ──────────────
+    // Envia um documento por passageiro para o onSnapshot do app detectar
+    const _tryPush = () => {
+      if (typeof NEXIA !== 'undefined' && NEXIA._ready && NEXIA.db) {
+        const db        = NEXIA.db;
+        const tenantRef = db.collection('tenants').doc('VP_AGENCIA_01');
+        const paxList   = grp.pax || [];
+        const ts        = typeof firebase !== 'undefined'
+                            ? firebase.firestore.FieldValue.serverTimestamp()
+                            : new Date();
+
+        // Broadcast: um documento de notificação por passageiro
+        const batch = db.batch();
+        paxList.forEach(p => {
+          const ref = tenantRef.collection('notifications').doc();
+          batch.set(ref, {
+            to:        String(this.group),       // tripKey = passenger ID
+            paxId:     String(p.id),
+            title:     title,
+            body:      body,
+            grupo:     this.group,
+            grupoLabel: grp.label || '',
+            read:      false,
+            sentAt:    ts,
+            sentBy:    'guia',
+            type:      'broadcast',
+          });
+        });
+        // Também grava no nível do grupo para histórico
+        tenantRef.collection('trips').doc(this.group)
+          .collection('broadcasts').add({
+            title, body,
+            grupo:     this.group,
+            grupoLabel: grp.label || '',
+            paxCount:  paxList.length,
+            sentAt:    ts,
+            sentBy:    'guia',
+          }).catch(e => console.warn('[broadcast log]', e));
+
+        batch.commit()
+          .then(() => G.toast('📣 Push enviado para ' + paxList.length + ' passageiros!', 'grn'))
+          .catch(e => {
+            console.warn('[sendPush batch]', e);
+            G.toast('📣 Push enviado (local) para ' + paxList.length + ' pessoas!', 'grn');
+          });
+      } else {
+        G.toast('📣 Push enfileirado — enviando quando Firestore conectar…');
+        setTimeout(_tryPush, 800);
+      }
+    };
+    _tryPush();
+
+    document.getElementById('push-title').value = '';
+    document.getElementById('push-body').value  = '';
+    this._pushLive();
+    this._renderBcBody();
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // MURAL (MODERAÇÃO)
+  // ══════════════════════════════════════════════════════════
+  render_mural(el) {
+    const grp = this.groups[this.group];
+    const photos = this.muralState[this.group] || [];
+    const pending  = photos.filter(p => p.status === 'pending').length;
+    const approved = photos.filter(p => p.status === 'approved').length;
+
+    el.innerHTML = `
+      <div class="sec" style="padding-bottom:12px">
+        <div class="eyebrow" style="margin-bottom:4px">Moderação de Conteúdo</div>
+        <div style="font-family:var(--ffs);font-size:1.4rem;color:var(--ink);margin-bottom:2px">Mural do Grupo</div>
+        <div style="font-family:var(--ff);font-size:9.5px;font-weight:300;color:var(--ink4)">${grp.emoji} ${grp.label}</div>
+      </div>
+
+      <div style="display:flex;gap:8px;padding:0 20px 14px">
+        <div style="flex:1;padding:10px 14px;background:var(--am2);border:1px solid rgba(181,98,10,0.2)">
+          <div style="font-family:var(--ffm);font-size:1.3rem;color:var(--amb)">${pending}</div>
+          <div style="font-family:var(--ff);font-size:7.5px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--amb);margin-top:2px">Pendentes</div>
+        </div>
+        <div style="flex:1;padding:10px 14px;background:var(--gr2);border:1px solid rgba(31,122,74,0.2)">
+          <div style="font-family:var(--ffm);font-size:1.3rem;color:var(--grn)">${approved}</div>
+          <div style="font-family:var(--ff);font-size:7.5px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--grn);margin-top:2px">Aprovadas</div>
+        </div>
+        <div style="flex:1;padding:10px 14px;background:var(--bg2);border:1px solid var(--brd)">
+          <div style="font-family:var(--ffm);font-size:1.3rem;color:var(--ink)">${photos.length}</div>
+          <div style="font-family:var(--ff);font-size:7.5px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink4);margin-top:2px">Total</div>
+        </div>
+      </div>
+
+      ${pending > 0 ? `
+        <div style="padding:0 20px 8px">
+          <div class="eyebrow" style="margin-bottom:8px">⏳ Aguardando Aprovação</div>
+        </div>
+      ` : ''}
+
+      <div class="mod-grid">
+        ${photos.length === 0 ? `<div class="mod-empty" style="grid-column:1/-1">Nenhuma foto enviada ainda</div>` :
+          photos.map(p => this._modCard(p)).join('')}
+      </div>
+
+      <div style="padding:0 20px 8px;margin-top:4px">
+        <div class="eyebrow" style="margin-bottom:8px">Ações em Massa</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-blk grn" style="font-size:7.5px" onclick="G.approveAll()">✅ Aprovar Todas</button>
+          <button class="btn-blk red" style="font-size:7.5px" onclick="G.rejectAll()">🗑 Rejeitar Pendentes</button>
+        </div>
+      </div>
+
+      <div style="height:20px"></div>
+    `;
+  },
+
+  _modCard(p) {
+    const isApproved = p.status === 'approved';
+    const isRejected = p.status === 'rejected';
+    return `
+      <div class="mod-card ${isApproved ? 'approved' : ''} ${isRejected ? 'rejected' : ''}" id="mod-${p.id}">
+        ${isApproved ? `<div class="mod-approved-badge">✓ Aprovado</div>` : ''}
+        <div class="mod-thumb">
+          <span style="font-size:3rem">${p.emoji}</span>
+          <div class="mod-overlay">
+            <span class="mod-sender">${p.sender}</span>
+          </div>
+        </div>
+        <div style="padding:6px 8px;font-family:var(--ff);font-size:8.5px;font-weight:300;color:var(--ink3);line-height:1.35">${p.caption}</div>
+        <div class="mod-actions">
+          <button class="mod-btn approve" title="Aprovar" onclick="G.moderatePhoto('${p.id}','approved')">✅</button>
+          <button class="mod-btn reject"  title="Rejeitar" onclick="G.moderatePhoto('${p.id}','rejected')">🗑</button>
+        </div>
+      </div>
+    `;
+  },
+
+  moderatePhoto(id, action) {
+    const photos = this.muralState[this.group];
+    const photo  = photos.find(p => p.id === id);
+    if (!photo) return;
+    photo.status = action;
+
+    // ── 5. Mural: .update() no Firestore ────────────────────────
+    const _tryUpdate = () => {
+      if (typeof NEXIA !== 'undefined' && NEXIA._ready && NEXIA.db) {
+        NEXIA.db.collection('tenants').doc('VP_AGENCIA_01')
+          .collection('trips').doc(this.group)
+          .collection('mural').doc(id)
+          .update({ status: action, moderatedAt: firebase.firestore.FieldValue.serverTimestamp(), moderatedBy: 'guia' })
+          .catch(e => console.warn('[moderatePhoto]', e));
+      }
+    };
+    _tryUpdate();
+
+    const msg = action === 'approved' ? '✅ Foto aprovada — publicada no mural!' : '🗑 Foto rejeitada';
+    this.toast(msg, action === 'approved' ? 'grn' : 'red');
+    this.render_mural(document.querySelector('#view-root > div'));
+  },
+
+  approveAll() {
+    const photos  = this.muralState[this.group];
+    const pending = photos.filter(p => p.status === 'pending');
+    if (pending.length === 0) { this.toast('Nenhuma pendente'); return; }
+    pending.forEach(p => { p.status = 'approved'; });
+
+    // Batch update no Firestore
+    const _tryBatch = () => {
+      if (typeof NEXIA !== 'undefined' && NEXIA._ready && NEXIA.db) {
+        const db      = NEXIA.db;
+        const colRef  = db.collection('tenants').doc('VP_AGENCIA_01')
+                          .collection('trips').doc(this.group).collection('mural');
+        const batch   = db.batch();
+        pending.forEach(p => {
+          batch.update(colRef.doc(p.id), {
+            status: 'approved',
+            moderatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            moderatedBy: 'guia_bulk',
+          });
+        });
+        batch.commit().catch(e => console.warn('[approveAll batch]', e));
+      }
+    };
+    _tryBatch();
+
+    this.toast('✅ ' + pending.length + ' fotos aprovadas!', 'grn');
+    this.render_mural(document.querySelector('#view-root > div'));
+  },
+
+  rejectAll() {
+    const photos  = this.muralState[this.group];
+    const pending = photos.filter(p => p.status === 'pending');
+    if (pending.length === 0) { this.toast('Nenhuma pendente'); return; }
+    pending.forEach(p => { p.status = 'rejected'; });
+
+    // Batch update no Firestore
+    const _tryBatch = () => {
+      if (typeof NEXIA !== 'undefined' && NEXIA._ready && NEXIA.db) {
+        const db      = NEXIA.db;
+        const colRef  = db.collection('tenants').doc('VP_AGENCIA_01')
+                          .collection('trips').doc(this.group).collection('mural');
+        const batch   = db.batch();
+        pending.forEach(p => {
+          batch.update(colRef.doc(p.id), {
+            status: 'rejected',
+            moderatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            moderatedBy: 'guia_bulk',
+          });
+        });
+        batch.commit().catch(e => console.warn('[rejectAll batch]', e));
+      }
+    };
+    _tryBatch();
+
+    this.toast('🗑 ' + pending.length + ' fotos rejeitadas', 'red');
+    this.render_mural(document.querySelector('#view-root > div'));
+  },
+
+  // ── TOAST ─────────────────────────────────────────────────
+  toast(msg, type, dur) {
+    dur = dur || 2800;
+    const root = document.getElementById('toast-root');
+    if (!root) return;
+    const el = document.createElement('div');
+    el.className = 'toast' + (type === 'red' ? ' red' : type === 'grn' ? ' grn' : '');
+    el.textContent = msg;
+    root.appendChild(el);
+    setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .25s'; setTimeout(() => el.remove(), 260); }, dur);
+  },
+};
+
+G.init();
+
+// ══════════════════════════════════════════════════════════════
+// ✅ FIREBASE BOOTSTRAP — delegado ao G._startFirestore()
+// O G.init() já chama G._startFirestore() que inicializa tudo.
+// Este bloco garante VP_SOS/VP_PASSENGERS se o NEXIA demorar.
+// ══════════════════════════════════════════════════════════════
+(function initGuideFirebase() {
+  const tryInit = () => {
+    if (typeof NEXIA === 'undefined' || !NEXIA._ready || !NEXIA.db) {
+      setTimeout(tryInit, 500); return;
+    }
+    window._vpGuideDb = NEXIA.db;
+    if (typeof VP_SOS        !== 'undefined' && !VP_SOS._unsub)        VP_SOS.startListener();
+    if (typeof VP_PASSENGERS !== 'undefined' && !VP_PASSENGERS._unsub) VP_PASSENGERS.startListener();
+    if (typeof VP_THEME      !== 'undefined' && !VP_THEME._unsub)      VP_THEME.startListener();
+    if (typeof VP_MODULES    !== 'undefined' && !VP_MODULES._unsub)    VP_MODULES.startListener();
+  };
+  tryInit();
+})();
+
+// ══════════════════════════════════════════════════════════════
+// ✅ VP_SOS — Receptor SOS em Tempo Real + Modal Extremo
+// ══════════════════════════════════════════════════════════════
+const VP_SOS = {
+  _unsub: null,
+  _activeAlerts: [],
+  _currentAlertId: null,
+
+  startListener() {
+    const db = window._vpGuideDb;
+    if (!db) { setTimeout(() => this.startListener(), 800); return; }
+    if (this._unsub) return;
+
+    this._unsub = db.collection('tenants').doc('VP_AGENCIA_01')
+      .collection('alerts')
+      .where('status', '==', 'active')
+      .onSnapshot(snap => {
+        const prev = this._activeAlerts.length;
+        this._activeAlerts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const count = this._activeAlerts.length;
+
+        this._updateBadge(count);
+
+        if (count > 0 && (count > prev || !document.getElementById('sos-modal').classList.contains('visible'))) {
+          const alert = this._activeAlerts[0];
+          this._showModal(alert);
+          this._markSOSOnManifesto(alert);
+        }
+        if (count === 0) {
+          this._hideModal();
+        }
+      }, err => console.warn('[VP_SOS onSnapshot]', err));
+  },
+
+  _updateBadge(count) {
+    let badge = document.getElementById('vp-sos-badge');
+    if (!badge) {
+      badge = document.createElement('div');
+      badge.id = 'vp-sos-badge';
+      badge.style.cssText = 'position:fixed;top:52px;right:10px;z-index:9000;background:#C0392B;color:#FFF;font-family:\'Sora\',sans-serif;font-size:8px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;cursor:pointer;animation:sosblink 1.2s ease-in-out infinite;display:none';
+      badge.onclick = () => VP_SOS._showModal(this._activeAlerts[0]);
+      document.getElementById('shell').appendChild(badge);
+    }
+    if (count > 0) {
+      badge.textContent = '🆘 SOS · ' + count;
+      badge.style.display = 'block';
+    } else {
+      badge.style.display = 'none';
+    }
+  },
+
+  _showModal(alert) {
+    if (!alert) return;
+    this._currentAlertId = alert.id;
+    const passengerName = alert.passenger || alert.nome || alert.passengerName || 'Passageiro';
+    const grupo         = alert.group   || alert.grupo || 'VP_AGENCIA_01';
+    const ts            = alert.createdAt?.toDate ? alert.createdAt.toDate().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    document.getElementById('sos-modal-title').textContent = '🆘 EMERGÊNCIA: ' + passengerName + ' acionou o SOS!';
+    document.getElementById('sos-modal-sub').textContent   = 'Verifique imediatamente a localização de ' + passengerName + ' e entre em contato.';
+    document.getElementById('sos-detail-pax').textContent  = passengerName;
+    document.getElementById('sos-detail-grupo').textContent = grupo;
+    document.getElementById('sos-detail-time').textContent = ts;
+    document.getElementById('sos-detail-id').textContent   = alert.id?.slice(0, 8) + '…';
+    document.getElementById('sos-modal').classList.add('visible');
+
+    if (navigator.vibrate) navigator.vibrate([400, 200, 400, 200, 800]);
+    this._flashTitle('🆘 SOS ATIVO!');
+  },
+
+  _hideModal() {
+    document.getElementById('sos-modal').classList.remove('visible');
+    this._currentAlertId = null;
+    document.title = 'Viajante Pro — Guia Operacional';
+  },
+
+  dismiss() {
+    document.getElementById('sos-modal').classList.remove('visible');
+    G.toast('⚠️ SOS ainda ativo — alerta visível na barra', 'red');
+  },
+
+  async resolve() {
+    const db = window._vpGuideDb;
+    const id = this._currentAlertId;
+    if (!db || !id) { G.toast('Nenhum alerta selecionado', 'red'); return; }
+    const btn = document.getElementById('sos-resolve-btn');
+    if (btn) { btn.textContent = 'Resolvendo…'; btn.disabled = true; }
+    try {
+      await db.collection('tenants').doc('VP_AGENCIA_01').collection('alerts').doc(id)
+        .update({ status: 'resolved', resolvedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      this._hideModal();
+      G.toast('✅ SOS marcado como resolvido!', 'grn');
+    } catch(e) {
+      G.toast('Erro ao resolver: ' + e.message, 'red');
+      if (btn) { btn.textContent = '✅ MARCAR COMO RESOLVIDO'; btn.disabled = false; }
+    }
+  },
+
+  _markSOSOnManifesto(alert) {
+    const paxName = alert.passenger || '';
+    if (!paxName || !window.G) return;
+    // Marca SOS no groups ao vivo (Firestore-backed)
+    Object.values(G.groups).forEach(grp => {
+      if (grp.pax) grp.pax.forEach(p => { if (p.name === paxName) p.sos = true; });
+    });
+    // Também marca no SEED_GROUPS para consistência offline
+    Object.values(G.SEED_GROUPS).forEach(grp => {
+      if (grp.pax) grp.pax.forEach(p => { if (p.name === paxName) p.sos = true; });
+    });
+    if (G.currentView === 'manifesto') {
+      const root = document.querySelector('#view-root > div');
+      if (root) G.render_manifesto(root);
+    }
+  },
+
+  _flashTitle(msg) {
+    let on = true;
+    const orig = 'Viajante Pro — Guia Operacional';
+    const iv = setInterval(() => {
+      document.title = on ? msg : orig;
+      on = !on;
+      if (!this._activeAlerts.length) { clearInterval(iv); document.title = orig; }
+    }, 900);
+  }
+};
+
+// ══════════════════════════════════════════════════════════════
+// ✅ VP_PASSENGERS — Aba Passageiros com Check-in em Tempo Real
+// ══════════════════════════════════════════════════════════════
+const VP_PASSENGERS = {
+  _unsub: null,
+  _passengers: [],
+  _loading: true,
+  _currentGroup: null,
+
+  startListener(groupKey) {
+    const db = window._vpGuideDb;
+    if (!db) { setTimeout(() => this.startListener(groupKey), 800); return; }
+    const gk = groupKey || G.group || 'disney';
+
+    // Se já está escutando o mesmo grupo, não refaz
+    if (this._unsub && this._currentGroup === gk) return;
+    // Cancela listener anterior se mudou de grupo
+    if (this._unsub) { this._unsub(); this._unsub = null; }
+
+    this._currentGroup = gk;
+    this._loading = true;
+    this._render();
+
+    // ── 1. onSnapshot na coleção passengers do grupo atual ─────────
+    this._unsub = db.collection('tenants').doc('VP_AGENCIA_01')
+      .collection('trips').doc(gk)
+      .collection('passengers')
+      .onSnapshot(snap => {
+        this._loading = false;
+        if (snap.empty) {
+          this._useFallback();
+        } else {
+          this._passengers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        }
+        this._render();
+        this._updateProgress();
+      }, err => {
+        this._loading = false;
+        console.warn('[VP_PASSENGERS]', err);
+        this._useFallback();
+      });
+  },
+
+  _useFallback() {
+    // Usa SEED_GROUPS como fonte de verdade offline
+    const grp = G.SEED_GROUPS[G.group] || G.groups[G.group];
+    if (!grp) return;
+    this._passengers = (grp.pax || []).map(p => ({
+      id: 'local_' + p.id, name: p.name, room: p.room, flight: p.flight,
+      checkinStatus: G.checkinState[G.group]?.[p.id] ? 'checkedin' : 'pending',
+      nexions: 0, tags: p.tags, color: p.bg, initials: p.avatar
+    }));
+    this._render();
+  },
+
+  _render() {
+    if (G.currentView !== 'passengers') return;
+    const root = document.querySelector('#view-root > div');
+    if (!root) return;
+    const total     = this._passengers.length;
+    const checkedIn = this._passengers.filter(p => p.checkinStatus === 'checkedin').length;
+    const sosCount = this._passengers.filter(p => p.sosActive).length;
+
+    root.innerHTML = `
+      <div class="pax-header">
+        <div>
+          <div class="eyebrow" style="margin-bottom:2px">Check-in · Tempo Real</div>
+          <div style="font-family:var(--ffs);font-style:italic;font-size:1.1rem;color:var(--ink)">Passageiros</div>
+        </div>
+        <button onclick="VP_PASSENGERS._syncAll()" style="padding:5px 12px;border:1px solid var(--brd);background:var(--bg2);font-family:var(--ff);font-size:7.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink4);cursor:pointer">↺ Sync</button>
+      </div>
+      <div class="pax-stats">
+        <div class="pax-stat"><div class="pax-stat-val">${total}</div><div class="pax-stat-lbl">Total</div></div>
+        <div class="pax-stat"><div class="pax-stat-val" style="color:var(--grn)">${checkedIn}</div><div class="pax-stat-lbl">Check-in</div></div>
+        <div class="pax-stat"><div class="pax-stat-val" style="color:${total - checkedIn > 0 ? 'var(--amb)' : 'var(--ink5)'}">${total - checkedIn}</div><div class="pax-stat-lbl">Pendentes</div></div>
+        ${sosCount > 0 ? `<div class="pax-stat"><div class="pax-stat-val" style="color:var(--red)">${sosCount}</div><div class="pax-stat-lbl" style="color:var(--red)">SOS</div></div>` : ''}
+      </div>
+      ${this._loading ? `<div class="pax-loading"><div class="pax-loading-ring"></div>Conectando ao Firestore…</div>` :
+        (total === 0 ? `<div class="pax-loading">Nenhum passageiro encontrado.</div>` : `<div class="pax-list">${this._passengers.map(p => this._paxCard(p)).join('')}</div>`)
+      }
+    `;
+  },
+
+  _paxCard(p) {
+    const isChecked = p.checkinStatus === 'checkedin';
+    const hasSOS    = p.sosActive === true;
+    const initials  = p.initials || (p.name ? p.name.split(' ').slice(0,2).map(w=>w[0]).join('') : '?');
+    const color     = p.color || '#1A4080';
+    const nexions   = p.nexions || 0;
+
+    return `
+      <div class="pax-card ${isChecked ? 'checkedin' : ''} ${hasSOS ? 'sos-alert' : ''}">
+        <div class="pax-card-row">
+          <div class="pax-av" style="background:${color}">${initials}</div>
+          <div class="pax-info">
+            <div class="pax-name">${p.name || '—'}</div>
+            <div class="pax-sub">${p.room ? 'Quarto ' + p.room : ''} ${p.flight ? '· Voo ' + p.flight : ''}</div>
+            ${nexions > 0 ? `<div class="pax-nexions">💎 ${nexions.toLocaleString('pt-BR')} Néxions</div>` : ''}
+          </div>
+          <button class="pax-checkin-btn ${isChecked ? 'done' : ''} ${hasSOS ? 'sos-btn' : ''}" onclick="VP_PASSENGERS.toggleCheckin('${p.id}','${(p.name||'').replace(/'/g,'\\\'')}')">
+            ${hasSOS ? '🆘 SOS' : isChecked ? '✓ OK' : 'Check-in'}
+          </button>
+        </div>
+      </div>
+    `;
+  },
+
+  async toggleCheckin(paxId, paxName) {
+    const db  = window._vpGuideDb;
+    const pax = this._passengers.find(p => p.id === paxId);
+    if (!pax) return;
+    const newStatus = pax.checkinStatus === 'checkedin' ? 'pending' : 'checkedin';
+
+    // Optimistic update
+    pax.checkinStatus = newStatus;
+    this._render();
+    this._updateProgress();
+
+    if (db && !paxId.startsWith('local_')) {
+      try {
+        // ── 3. .update() real no Firestore — caminho correto por grupo ──
+        await db.collection('tenants').doc('VP_AGENCIA_01')
+          .collection('trips').doc(G.group)
+          .collection('passengers').doc(paxId)
+          .set({
+            checkinStatus: newStatus,
+            checkinAt: newStatus === 'checkedin' ? firebase.firestore.FieldValue.serverTimestamp() : null,
+            checkinBy: 'guia'
+          }, { merge: true });
+        // Sincroniza checkinState local
+        G.checkinState[G.group][parseInt(paxId) || paxId] = newStatus === 'checkedin';
+        G._updateProgress();
+        G.toast(newStatus === 'checkedin'
+          ? '✅ ' + paxName + ' — Check-in confirmado!'
+          : '↩ ' + paxName + ' — Check-in removido',
+          newStatus === 'checkedin' ? 'grn' : '');
+      } catch(e) {
+        G.toast('Erro ao salvar: ' + e.message, 'red');
+        // Rollback
+        pax.checkinStatus = newStatus === 'checkedin' ? 'pending' : 'checkedin';
+        this._render();
+      }
+    } else {
+      G.checkinState[G.group][parseInt(paxId.replace('local_',''))] = newStatus === 'checkedin';
+      G._updateProgress();
+      G.toast(newStatus === 'checkedin'
+        ? '✅ ' + paxName + ' embarcou (local)'
+        : '↩ Removido (local)', 'grn');
+    }
+  },
+
+  async _syncAll() {
+    G.toast('↺ Sincronizando com Firestore…');
+    if (this._unsub) { this._unsub(); this._unsub = null; }
+    this._loading = true;
+    this._currentGroup = null;
+    this._render();
+    this.startListener(G.group);
+  },
+
+  _updateProgress() {
+    const total     = this._passengers.length;
+    const checkedIn = this._passengers.filter(p => p.checkinStatus === 'checkedin').length;
+    if (total === 0) return;
+    const pct = Math.round((checkedIn / total) * 100);
+    const countEl = document.getElementById('ps-count');
+    const fillEl  = document.getElementById('ps-fill');
+    if (countEl) countEl.textContent = checkedIn + '/' + total + ' (FS)';
+    if (fillEl)  fillEl.style.width  = pct + '%';
+  }
+};
+
+// ── EXTEND G ──
+const _origNav = G.nav.bind(G);
+G.nav = function(v, btn) {
+  _origNav(v, btn);
+  if (v === 'passengers') {
+    G.currentView = 'passengers';
+    // Resubscreve no grupo atual se mudou
+    VP_PASSENGERS.startListener(G.group);
+    VP_PASSENGERS._render();
+  }
+};
+G.render_passengers = function(el) {
+  el.innerHTML = '<div class="pax-loading"><div class="pax-loading-ring"></div>Carregando passageiros…</div>';
+  VP_PASSENGERS._loading = !VP_PASSENGERS._passengers.length;
+  VP_PASSENGERS.startListener(G.group);
+  VP_PASSENGERS._render();
+};
+
+// Troca listener quando guia muda de grupo
+const _origSetGroup = G.setGroup.bind(G);
+G.setGroup = function(key, btn) {
+  _origSetGroup(key, btn);
+  // Se a aba Passageiros estiver ativa, reinicia o listener para o novo grupo
+  if (G.currentView === 'passengers') {
+    VP_PASSENGERS.startListener(key);
+  }
+};
+
+// ══════════════════════════════════════════════════════════════
+// VP_THEME — Reatividade de Design em Tempo Real
+// ══════════════════════════════════════════════════════════════
+const VP_THEME = {
+  _unsub: null,
+  startListener() {
+    const tryStart = () => {
+      const db = window._vpGuideDb;
+      if (!db) { setTimeout(tryStart, 800); return; }
+      if (this._unsub) return;
+      this._unsub = db.collection('tenants').doc('VP_AGENCIA_01').collection('public_site').doc('config')
+        .onSnapshot(snap => {
+          if (!snap.exists) return;
+          const cfg = snap.data();
+          if (!cfg || !cfg.color) return;
+          const hex = cfg.color.replace('#','');
+          const r = parseInt(hex.substring(0,2),16);
+          const g = parseInt(hex.substring(2,4),16);
+          const b = parseInt(hex.substring(4,6),16);
+          const rgb = r+','+g+','+b;
+          const root = document.documentElement;
+          root.style.setProperty('--gold',   cfg.color);
+          root.style.setProperty('--accent', cfg.color);
+          root.style.setProperty('--blu',    cfg.color);
+          root.style.setProperty('--gold2',  'rgba('+rgb+',0.14)');
+          root.style.setProperty('--blu2',   'rgba('+rgb+',0.08)');
+          try { localStorage.setItem('vp_guide_theme', JSON.stringify(cfg)); } catch(e){}
+          if (window.G && G.toast) G.toast('🎨 Tema atualizado pelo Admin');
+        }, err => console.warn('[VP_THEME]', err));
+    };
+    tryStart();
+  }
+};
+
+// ══════════════════════════════════════════════════════════════
+// VP_MODULES — Reatividade de Módulos em Tempo Real
+// ══════════════════════════════════════════════════════════════
+const VP_MODULES = {
+  _unsub: null,
+  startListener() {
+    const tryStart = () => {
+      const db = window._vpGuideDb;
+      if (!db) { setTimeout(tryStart, 800); return; }
+      if (this._unsub) return;
+      this._unsub = db.collection('tenants').doc('VP_AGENCIA_01').collection('modules')
+        .onSnapshot(snap => {
+          snap.forEach(doc => {
+            const mod    = doc.id;
+            const active = doc.data().status === 'active';
+            document.querySelectorAll('[data-module="' + mod + '"]').forEach(el => {
+              el.style.display = active ? '' : 'none';
+            });
+            if (mod === 'sos' || mod === 'chat') {
+              document.querySelectorAll('.nb[data-v="' + mod + '"], .nb.crise-btn[data-v="crise"]').forEach(el => {
+                if (mod === 'sos') el.style.display = active ? '' : 'none';
+              });
+              if (mod === 'chat') {
+                document.querySelectorAll('[data-module="broadcast"], .nb[data-v="broadcast"]').forEach(el => {
+                  el.style.display = active ? '' : 'none';
+                });
+              }
+            }
+          });
+        }, err => console.warn('[VP_MODULES]', err));
+    };
+    tryStart();
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  if(window.NexiaBridge) NexiaBridge.init({ intro: 1200, brand: 'VIAJANTE PRO' });
+});
+</script>
+
+<div id="nexia-intro" style="position:fixed;inset:0;z-index:99999;background:#0C0B09;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;animation:introFadeOut 0.5s ease 1.2s forwards;pointer-events:none;">
+  <div style="width:52px;height:52px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 40%,#00e5ff 100%);border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(0,229,255,0.25);position:relative;overflow:hidden;animation:introGemIn 0.4s cubic-bezier(0.22,1,0.36,1) 0s both;">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.15) 0%,transparent 60%);border-radius:14px"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="24" height="24" style="position:relative;z-index:1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+  </div>
+  <div style="text-align:center;animation:introTextIn 0.4s ease 0.2s both;">
+    <div style="font-family:'DM Serif Display',Georgia,serif;font-style:italic;font-size:22px;color:#eef4ff;letter-spacing:0.02em;line-height:1">Viajante<span style="font-family:'Sora',sans-serif;font-style:normal;font-weight:700;font-size:13px;letter-spacing:0.12em;color:#B8935A;margin-left:4px;vertical-align:middle"> Pro</span></div>
+    <div style="font-family:'Sora',sans-serif;font-size:9px;font-weight:600;letter-spacing:0.3em;text-transform:uppercase;color:rgba(184,147,90,0.6);margin-top:5px">Guia Operacional</div>
+  </div>
+  <div style="width:48px;height:2px;background:rgba(255,255,255,0.06);border-radius:1px;overflow:hidden;animation:introBarIn 0.3s ease 0.3s both;">
+    <div style="height:100%;background:linear-gradient(90deg,#00e5ff,#8b5cf6);width:0%;animation:introBarFill 0.7s ease 0.4s forwards;border-radius:1px"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// VP-GUIDE — Dashboard do Guia + Lista de Passageiros
+// ═══════════════════════════════════════════════════════════════════
+(function() {
+  const KEY = 'vp_guide_dashboard';
+  
+  function _getSeedData() {
+    return {
+      guide: { name: 'Carlos Guia', trips: 12, rating: 4.8, passengers: 48 },
+      currentTrip: { name: 'Disney World 2026', departure: '2026-07-15', return: '2026-07-22', passengers: 23, hotel: 'Disney Coronado Springs', status: 'ativo' },
+      passengers: [
+        { id:'p1', name:'Ana Silva', seat:'12A', status:'embarcado', docs:'✅', phone:'+55 11 99999-0001', notes:'Alérgica a glúten' },
+        { id:'p2', name:'Carlos Mendes', seat:'12B', status:'embarcado', docs:'✅', phone:'+55 11 99999-0002', notes:'' },
+        { id:'p3', name:'Fernanda Costa', seat:'13A', status:'aguardando', docs:'⚠️', phone:'+55 11 99999-0003', notes:'Passaporte vence em 4 meses' },
+        { id:'p4', name:'Roberto Lima', seat:'13B', status:'embarcado', docs:'✅', phone:'+55 11 99999-0004', notes:'' },
+        { id:'p5', name:'Juliana Alves', seat:'14A', status:'sos', docs:'✅', phone:'+55 11 99999-0005', notes:'SOS ATIVO — perdeu a bagagem' },
+        { id:'p6', name:'Pedro Santos', seat:'14B', status:'embarcado', docs:'✅', phone:'+55 11 99999-0006', notes:'' },
+      ],
+      alerts: [
+        { type:'sos', msg:'Juliana Alves — bagagem perdida no aeroporto', ts: new Date().toISOString() },
+        { type:'doc', msg:'Fernanda Costa — passaporte vence em 120 dias', ts: new Date(Date.now()-3600000).toISOString() },
+      ]
+    };
+  }
+
+  function renderDashboard(root) {
+    if (!root) return;
+    const d = _getSeedData();
+    const statusColors = { embarcado:'#00e87a', aguardando:'#ffaa00', sos:'#ff3d5a' };
+    const embarcados = d.passengers.filter(p=>p.status==='embarcado').length;
+    const sos_count  = d.passengers.filter(p=>p.status==='sos').length;
+    const pct = Math.round(embarcados/d.passengers.length*100);
+
+    root.innerHTML = `
+      <div style="padding:16px;overflow-y:auto;height:100%;background:var(--bg,#0E0E0D)">
+        <!-- Header -->
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#00e5ff,#7b5cfa);display:flex;align-items:center;justify-content:center;font-size:18px">👨‍✈️</div>
+          <div>
+            <div style="font-size:15px;font-weight:800;color:#fff">${d.guide.name}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.4)">⭐ ${d.guide.rating} · ${d.guide.trips} viagens · ${d.guide.passengers} passageiros</div>
+          </div>
+        </div>
+
+        <!-- Viagem atual -->
+        <div style="background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.2);border-radius:14px;padding:16px;margin-bottom:16px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(0,229,255,0.7);margin-bottom:6px">✈️ Viagem Atual</div>
+          <div style="color:#fff;font-size:15px;font-weight:800;margin-bottom:6px">${d.currentTrip.name}</div>
+          <div style="color:rgba(255,255,255,0.4);font-size:11px;margin-bottom:10px">${d.currentTrip.hotel} · ${new Date(d.currentTrip.departure).toLocaleDateString('pt-BR')} → ${new Date(d.currentTrip.return).toLocaleDateString('pt-BR')}</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <div style="text-align:center;background:rgba(255,255,255,0.04);border-radius:8px;padding:8px">
+              <div style="font-size:20px;font-weight:800;color:#00e5ff">${d.passengers.length}</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px">Total</div>
+            </div>
+            <div style="text-align:center;background:rgba(0,232,122,0.08);border-radius:8px;padding:8px">
+              <div style="font-size:20px;font-weight:800;color:#00e87a">${embarcados}</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px">Embarcados</div>
+            </div>
+            <div style="text-align:center;background:${sos_count?'rgba(255,61,90,0.1)':'rgba(255,255,255,0.04)'};border-radius:8px;padding:8px">
+              <div style="font-size:20px;font-weight:800;color:${sos_count?'#ff3d5a':'rgba(255,255,255,0.3)'}">${sos_count}</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:2px">SOS</div>
+            </div>
+          </div>
+          <!-- Progress -->
+          <div style="margin-top:10px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:9px;color:rgba(255,255,255,0.3)">Embarque</span>
+              <span style="font-size:9px;color:#00e5ff;font-weight:700">${pct}%</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.08);border-radius:4px;height:4px">
+              <div style="height:100%;background:linear-gradient(90deg,#00e5ff,#00e87a);width:${pct}%;border-radius:4px;transition:width 0.5s"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alertas -->
+        ${d.alerts.length ? `
+        <div style="margin-bottom:16px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,61,90,0.8);margin-bottom:8px">🚨 Alertas Ativos</div>
+          ${d.alerts.map(a=>`
+            <div style="background:rgba(255,61,90,0.08);border:1px solid rgba(255,61,90,0.2);border-radius:8px;padding:10px;margin-bottom:6px;font-size:11px;color:rgba(255,255,255,0.7)">${a.msg}</div>`).join('')}
+        </div>` : ''}
+
+        <!-- Lista passageiros -->
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px">Lista de Passageiros</div>
+          ${d.passengers.map(p=>`
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;margin-bottom:6px">
+              <div style="width:32px;height:32px;border-radius:50%;background:${p.status==='sos'?'rgba(255,61,90,0.2)':'rgba(0,229,255,0.1)'};display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">${p.name.charAt(0)}</div>
+              <div style="flex:1;min-width:0">
+                <div style="color:#fff;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div>
+                <div style="color:rgba(255,255,255,0.3);font-size:10px">${p.seat} · ${p.docs}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+                <span style="background:${statusColors[p.status]||'#64748b'}18;color:${statusColors[p.status]||'#64748b'};border-radius:20px;padding:2px 8px;font-size:8px;font-weight:700;white-space:nowrap">${p.status.toUpperCase()}</span>
+                ${p.notes?`<span style="color:rgba(255,170,0,0.8);font-size:8px;max-width:100px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.notes}</span>`:''}
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  // Hook G.nav para dashboard
+  document.addEventListener('DOMContentLoaded', () => {
+    const origNav = window.G?.nav?.bind(window.G);
+    if (!origNav) return;
+    const _nav = G.nav;
+    G.nav = function(v, btn) {
+      _nav.call(G, v, btn);
+      if (v === 'dashboard') {
+        const root = document.getElementById('view-root');
+        if (root) setTimeout(() => renderDashboard(root), 50);
+      }
+    };
+  });
+})();
+</script>
+</body>
+</html>

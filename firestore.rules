@@ -1,0 +1,204 @@
+rules_version = '2';
+// ═══════════════════════════════════════════════════════════════════
+// NEXIA OS — Firestore Security Rules v2.0
+// Tenant isolation + Role-based access control
+// SUPER_ADMIN: full access to all tenants
+// CLIENT_ADMIN: own tenant only
+// Users: own documents only
+// Public landing: read-only
+// ═══════════════════════════════════════════════════════════════════
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper functions ──────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn() &&
+        (request.auth.token.role == 'SUPER_ADMIN' ||
+         request.auth.token.role == 'NEXIA_ADMIN' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'SUPER_ADMIN');
+    }
+
+    function isClientAdmin(tenantId) {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.tenantId == tenantId &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['CLIENT_ADMIN','CES_ADMIN','BEZSAN_ADMIN'];
+    }
+
+    function isTenantMember(tenantId) {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.tenantId == tenantId;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // ── Global Users Collection ───────────────────────────────────
+    match /users/{uid} {
+      allow read:  if isSignedIn() && (isOwner(uid) || isSuperAdmin());
+      allow write: if isSignedIn() && (isOwner(uid) || isSuperAdmin());
+      allow create: if isSignedIn();
+    }
+
+    // ── Global Modules (store) ────────────────────────────────────
+    match /modules/{moduleId} {
+      allow read:  if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    // ── Global Plans ──────────────────────────────────────────────
+    match /plans/{planId} {
+      allow read:  if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    // ── System Config (kill chain, version) ──────────────────────
+    match /_config/{docId} {
+      allow read:  if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+    match /_system/{docId} {
+      allow read:  if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    // ── Telemetry (readable by all admins, writable by system) ───
+    match /nexia_telemetry/{docId} {
+      allow read:  if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    // ── Audit Logs (global) ───────────────────────────────────────
+    match /audit_logs/{logId} {
+      allow read:  if isSuperAdmin();
+      allow create: if isSignedIn();
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // ── Online Presence ───────────────────────────────────────────
+    match /online/{uid} {
+      allow read:  if isSignedIn();
+      allow write: if isOwner(uid) || isSuperAdmin();
+    }
+
+    // ── Silent Push / Notifications ──────────────────────────────
+    match /silent_push/{uid} {
+      allow read:  if isOwner(uid) || isSuperAdmin();
+      allow write: if isSuperAdmin();
+    }
+
+    // ── Credentials (CES badge QR) ────────────────────────────────
+    match /credentials/{credId} {
+      allow read:  if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+
+    // ── SOS Tracking ─────────────────────────────────────────────
+    match /sos_tracking/{uid} {
+      allow read:  if isTenantMember('VP_AGENCIA_01') || isSuperAdmin();
+      allow write: if isOwner(uid) || isSuperAdmin();
+    }
+
+    // ── Nexions Wallets ───────────────────────────────────────────
+    match /nexions_wallets/{uid} {
+      allow read:  if isOwner(uid) || isSuperAdmin();
+      allow write: if isSuperAdmin(); // only via server transactions
+    }
+
+    // ── Tenant Data — CORE ISOLATION ─────────────────────────────
+    match /tenants/{tenantId} {
+      // Tenant doc: admins can read own tenant, super reads all
+      allow read:  if isSuperAdmin() || isClientAdmin(tenantId) || isTenantMember(tenantId);
+      allow write: if isSuperAdmin();
+
+      // ── All subcollections under a tenant ──────────────────────
+      match /{subcollection}/{docId} {
+        allow read:  if isSuperAdmin() || isTenantMember(tenantId);
+        allow write: if isSuperAdmin() || isClientAdmin(tenantId);
+      }
+
+      // ── Deeply nested subcollections ───────────────────────────
+      match /{subcollection}/{docId}/{nested=**} {
+        allow read:  if isSuperAdmin() || isTenantMember(tenantId);
+        allow write: if isSuperAdmin() || isClientAdmin(tenantId);
+      }
+
+      // ── Public site (landing pages) — read by anyone ───────────
+      match /public_site/{docId} {
+        allow read:  if true; // public landing page content
+        allow write: if isSuperAdmin() || isClientAdmin(tenantId);
+      }
+
+      // ── Orders (checkout) — user can create own ────────────────
+      match /orders/{orderId} {
+        allow read:  if isSuperAdmin() || isClientAdmin(tenantId) || isTenantMember(tenantId);
+        allow create: if isSignedIn() && isTenantMember(tenantId);
+        allow update: if isSuperAdmin(); // only server (mp-webhook) updates
+      }
+
+      // ── Trips — passengers can read their trip ──────────────────
+      match /trips/{tripId} {
+        allow read:  if isSignedIn() && isTenantMember(tenantId);
+        allow write: if isSuperAdmin() || isClientAdmin(tenantId);
+
+        match /passengers/{paxId} {
+          allow read:  if isSignedIn() && isTenantMember(tenantId);
+          allow write: if isSuperAdmin() || isClientAdmin(tenantId);
+        }
+        match /schedule/{evtId} {
+          allow read:  if isSignedIn() && isTenantMember(tenantId);
+          allow write: if isSuperAdmin() || isClientAdmin(tenantId);
+        }
+      }
+
+      // ── Auctions — any authenticated can read, KYC required for bids
+      match /auctions/{auctionId} {
+        allow read:  if isSignedIn();
+        allow write: if isSuperAdmin() || isClientAdmin(tenantId);
+
+        match /bids/{bidId} {
+          allow read:  if isSignedIn();
+          allow create: if isSignedIn() && isTenantMember(tenantId);
+          allow update, delete: if isSuperAdmin();
+        }
+      }
+
+      // ── Contracts — sensitive, only tenant members + admins ────
+      match /contracts/{contractId} {
+        allow read:  if isSuperAdmin() || isClientAdmin(tenantId) || isTenantMember(tenantId);
+        allow create: if isSignedIn() && isTenantMember(tenantId);
+        allow update: if isSuperAdmin() || isClientAdmin(tenantId);
+        allow delete: if isSuperAdmin();
+      }
+
+      // ── Broadcasts — any member reads, admin writes ─────────────
+      match /broadcasts/{docId} {
+        allow read:  if isSignedIn() && isTenantMember(tenantId);
+        allow write: if isSuperAdmin() || isClientAdmin(tenantId);
+      }
+
+      // ── Polls — members read/vote, guides create ────────────────
+      match /polls/{pollId} {
+        allow read:  if isSignedIn() && isTenantMember(tenantId);
+        allow create: if isSignedIn() && isTenantMember(tenantId);
+        allow update: if isSignedIn() && isTenantMember(tenantId); // voting
+        allow delete: if isSuperAdmin() || isClientAdmin(tenantId);
+      }
+    }
+
+    // ── Public nexia landing ──────────────────────────────────────
+    match /public_site/{docId} {
+      allow read:  if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // ── Fallback: deny everything else ───────────────────────────
+    match /{document=**} {
+      allow read, write: if isSuperAdmin();
+    }
+  }
+}

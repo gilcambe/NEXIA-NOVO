@@ -1,0 +1,72 @@
+# ═══════════════════════════════════════════════════════════════════
+# NEXIA OS — _redirects MERGED v8.0
+# Sources: A (fixes + 301 shorts) + B (comprehensive SPA fallbacks)
+# ═══════════════════════════════════════════════════════════════════
+
+# ── Service Workers ──────────────────────────────────────────────
+/sw.js            /sw.js                          200
+/sw-vp.js         /viajante-pro/sw-vp.js          200
+
+# ── Manifests ────────────────────────────────────────────────────
+/manifest.json               /core/manifest.json                 200
+/ces/manifest.json           /ces/ces-manifest.json              200
+/viajante-pro/manifest.json  /viajante-pro/vp-manifest.json      200
+/bezsan/manifest.json        /bezsan/bezsan-manifest.json        200
+
+# ── Webhooks ─────────────────────────────────────────────────────
+/webhook/mercadopago    /.netlify/functions/mp-webhook    200
+
+# ── Static assets ────────────────────────────────────────────────
+/modules/:file    /modules/:file    200
+/core/:file       /core/:file       200
+
+# ── CES Check-in ─────────────────────────────────────────────────
+/ces/checkin      /ces/checkin.html     200
+
+# ── 301 Short URLs (CEO convenience — from both A and B) ─────────
+/master         /nexia/nexia-master.html          301
+/admin          /nexia/nexia-master.html          301
+/nexia-master   /nexia/nexia-master.html          301
+/tenant-hub     /nexia/tenant-hub.html             301
+/pki            /nexia/pki-scanner.html            301
+/vp             /viajante-pro/vp-landing.html     301
+/vp-admin       /viajante-pro/vp-admin.html       301
+/vp-passenger   /viajante-pro/vp-passenger.html   301
+/vp-guide       /viajante-pro/vp-guide.html       301
+/ces            /ces/ces-landing.html              301
+/ces-admin      /ces/ces-admin.html               301
+/ces-app        /ces/ces-app-executivo.html        301
+/bezsan         /bezsan/bezsan-landing.html        301
+/bezsan-admin   /bezsan/bezsan-admin.html          301
+/bezsan-app     /bezsan/bezsan-app.html            301
+/login          /login.html                        301
+
+# ── Explicit file routes (200) ────────────────────────────────────
+/nexia/nexia-master.html   /nexia/nexia-master.html   200
+/nexia/tenant-hub.html     /nexia/tenant-hub.html     200
+/nexia/pki-scanner.html    /nexia/pki-scanner.html    200
+
+/viajante-pro/vp-admin.html     /viajante-pro/vp-admin.html     200
+/viajante-pro/vp-passenger.html /viajante-pro/vp-passenger.html 200
+/viajante-pro/vp-guide.html     /viajante-pro/vp-guide.html     200
+/viajante-pro/vp-landing.html   /viajante-pro/vp-landing.html   200
+
+/ces/ces-admin.html           /ces/ces-admin.html           200
+/ces/ces-landing.html         /ces/ces-landing.html         200
+/ces/ces-app-executivo.html   /ces/ces-app-executivo.html   200
+
+/bezsan/bezsan-admin.html   /bezsan/bezsan-admin.html   200
+/bezsan/bezsan-landing.html /bezsan/bezsan-landing.html 200
+/bezsan/bezsan-app.html     /bezsan/bezsan-app.html     200
+
+/login.html     /login.html      200
+/bootstrap.html /bootstrap.html  200
+
+# ── SPA fallbacks per vertical ────────────────────────────────────
+/nexia/*           /nexia/nexia-master.html          200
+/viajante-pro/*    /viajante-pro/vp-landing.html     200
+/ces/*             /ces/ces-landing.html             200
+/bezsan/*          /bezsan/bezsan-landing.html       200
+
+# ── Final fallback — 404 for truly unknown routes ────────────────
+/*    /index.html    404

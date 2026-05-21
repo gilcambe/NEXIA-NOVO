@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXIA OS — Bootstrap</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#07090E;--bg2:#0C0F18;--bg3:#111520;--brd:rgba(196,149,90,.14);--brd2:rgba(196,149,90,.28);--gold:#C4955A;--gold2:#D4AF72;--glt:rgba(196,149,90,.08);--txt:#B8A898;--txt2:#6A5A4A;--txt3:#2E2218;--white:#F5F0E8;--red:#FF3D5A;--green:#2ED080;--amber:#F5A623;--ff:'Sora',sans-serif;--ffm:'DM Mono',monospace}
+body{font-family:var(--ff);background:var(--bg);color:var(--txt);min-height:100vh;padding:32px 16px;display:flex;flex-direction:column;align-items:center}
+h1{font-size:.95rem;font-weight:600;color:var(--white);letter-spacing:.05em;margin-bottom:4px}
+.sub{font-size:10px;color:var(--txt2);margin-bottom:28px;letter-spacing:.05em}
+.wrap{width:100%;max-width:540px}
+.warn{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.25);border-radius:8px;padding:13px 15px;font-size:11px;color:var(--amber);line-height:1.7;margin-bottom:20px}
+.sect{background:var(--bg2);border:1px solid var(--brd);border-radius:12px;padding:22px;margin-bottom:14px}
+.stitle{font-family:var(--ffm);font-size:8px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.stitle::after{content:'';flex:1;height:1px;background:var(--brd)}
+.fg{margin-bottom:12px}
+.lbl{display:block;font-family:var(--ffm);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--txt2);margin-bottom:5px}
+.inp{width:100%;background:var(--bg3);border:1px solid var(--brd);border-radius:7px;padding:10px 12px;color:var(--white);font-family:var(--ff);font-size:12.5px;outline:none;transition:border-color .2s}
+.inp:focus{border-color:rgba(196,149,90,.4)}
+.sel{width:100%;background:var(--bg3);border:1px solid var(--brd);border-radius:7px;padding:10px 12px;color:var(--white);font-family:var(--ffm);font-size:11px;outline:none;cursor:pointer}
+.row{display:flex;gap:10px}
+.row .fg{flex:1;margin-bottom:0}
+.btn{width:100%;padding:11px;background:var(--glt);border:1px solid var(--brd2);border-radius:7px;color:var(--gold2);font-family:var(--ff);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:4px}
+.btn:hover:not(:disabled){background:var(--gold);color:var(--bg)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-sm{background:transparent;border:1px solid var(--brd);color:var(--txt);margin-top:8px}
+.btn-sm:hover{background:var(--glt);color:var(--gold)}
+.log{background:var(--bg3);border:1px solid var(--brd);border-radius:7px;padding:12px;font-family:var(--ffm);font-size:10px;line-height:1.8;min-height:72px;max-height:200px;overflow-y:auto;margin-top:13px}
+.lk{color:var(--green)}.le{color:var(--red)}.li{color:var(--gold)}.ld{color:var(--txt2)}
+.ft{margin-top:20px;text-align:center;font-size:9.5px;color:var(--txt2)}
+.ft a{color:var(--gold);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>⚙ NEXIA OS — Configuração Inicial</h1>
+  <div class="sub">Bootstrap · Criar Super Admin · Configurar Tenants</div>
+
+  <div class="warn">
+    ⚠️ <strong>Uso único.</strong> Após configurar, restrinja o acesso a esta página.
+    A senha é enviada diretamente ao Firebase — nunca armazenada aqui.
+  </div>
+
+  <!-- STEP 1: Super Admin -->
+  <div class="sect">
+    <div class="stitle">1 · Super Admin Global</div>
+    <div class="fg">
+      <label class="lbl">E-mail</label>
+      <input class="inp" id="sa-email" type="email" value="admin@nexia.local">
+    </div>
+    <div class="fg">
+      <label class="lbl">Senha (do .env: NEXIA_SUPER_ADMIN_PASSWORD)</label>
+      <input class="inp" id="sa-pass" type="password" placeholder="Cole a senha aqui">
+    </div>
+    <div class="fg">
+      <label class="lbl">Nome</label>
+      <input class="inp" id="sa-name" type="text" value="Super Admin">
+    </div>
+    <button class="btn" id="btn-sa" onclick="createSA()">👑 Criar Super Admin</button>
+    <div class="log" id="log-sa"><span class="ld">› Aguardando...</span></div>
+  </div>
+
+  <!-- STEP 2: Tenants -->
+  <div class="sect">
+    <div class="stitle">2 · Tenants Iniciais</div>
+    <button class="btn" id="btn-ten" onclick="createTenants()">🏢 Criar Tenants no Firestore</button>
+    <div class="log" id="log-ten"><span class="ld">› Aguardando...</span></div>
+  </div>
+
+  <!-- STEP 3: Extra user -->
+  <div class="sect">
+    <div class="stitle">3 · Criar Usuário Adicional</div>
+    <div class="row">
+      <div class="fg"><label class="lbl">E-mail</label><input class="inp" id="u-email" type="email" placeholder="email@empresa.com"></div>
+      <div class="fg"><label class="lbl">Senha</label><input class="inp" id="u-pass" type="password" placeholder="mín. 6 chars"></div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="row">
+      <div class="fg"><label class="lbl">Nome</label><input class="inp" id="u-name" type="text" placeholder="Nome completo"></div>
+      <div class="fg">
+        <label class="lbl">Role</label>
+        <select class="sel" id="u-role">
+          <option value="NEXIA_ADMIN">NEXIA_ADMIN</option>
+          <option value="CES_ADMIN">CES_ADMIN</option>
+          <option value="CLIENT_ADMIN">CLIENT_ADMIN</option>
+          <option value="VIAJANTE_USER">VIAJANTE_USER</option>
+        </select>
+      </div>
+    </div>
+    <div style="height:10px"></div>
+    <div class="fg">
+      <label class="lbl">Tenant</label>
+      <select class="sel" id="u-tenant">
+        <option value="VP_AGENCIA_01">VP_AGENCIA_01 — Viajante Pro</option>
+        <option value="CES_2027_BR">CES_2027_BR — CES Brasil 2027</option>
+        <option value="NEXIA_MASTER">NEXIA_MASTER — Nexia</option>
+      </select>
+    </div>
+    <button class="btn" id="btn-usr" onclick="createUser()">👤 Criar Usuário</button>
+    <div class="log" id="log-usr"><span class="ld">› Aguardando...</span></div>
+  </div>
+
+  <!-- STEP 4: Verify -->
+  <div class="sect">
+    <div class="stitle">4 · Verificar</div>
+    <button class="btn btn-sm" onclick="verify()">🔍 Verificar Firestore</button>
+    <div class="log" id="log-ver"><span class="ld">› Aguardando...</span></div>
+  </div>
+
+  <div class="ft"><a href="login.html">← Ir para o Login</a></div>
+</div>
+
+<script>
+'use strict';
+var FB = {
+  apiKey:"AIzaSyC9L592zKSUjx-YglmbGpxjv2hsXm_gbBM",
+  authDomain:"nexia-c8710.firebaseapp.com",
+  projectId:"nexia-c8710",
+  storageBucket:"nexia-c8710.firebasestorage.app",
+  messagingSenderId:"623044447905",
+  appId:"1:623044447905:web:13f70e1584fb0fcf8d2ae0"
+};
+if (!firebase.apps.length) firebase.initializeApp(FB);
+var auth = firebase.auth();
+var db   = firebase.firestore();
+
+var PERMS = {
+  SUPER_ADMIN:['ACCESS_ALL_TENANTS','MANAGE_TENANTS','MANAGE_USERS','MANAGE_MODULES','VIEW_ANALYTICS','ACCESS_STORE','ACCESS_CES','ACCESS_VIAJANTE'],
+  NEXIA_ADMIN:['MANAGE_TENANTS','MANAGE_USERS','VIEW_ANALYTICS','ACCESS_STORE'],
+  CES_ADMIN:['ACCESS_CES','VIEW_ANALYTICS','ACCESS_STORE'],
+  CLIENT_ADMIN:['ACCESS_VIAJANTE','ACCESS_STORE','VIEW_ANALYTICS'],
+  VIAJANTE_USER:['ACCESS_VIAJANTE']
+};
+var CLEARANCE = {SUPER_ADMIN:100,NEXIA_ADMIN:100,CES_ADMIN:50,CLIENT_ADMIN:50,VIAJANTE_USER:5,USER:1};
+
+function log(box, msg, t) {
+  var el = document.getElementById(box);
+  var cls = t==='ok'?'lk':t==='err'?'le':t==='i'?'li':'ld';
+  if (el.querySelector('.ld') && el.querySelector('.ld').textContent.includes('Aguardando')) el.innerHTML='';
+  var d = document.createElement('div');
+  d.className = cls;
+  d.textContent = '› ' + msg;
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
+
+function createSA() {
+  var email = document.getElementById('sa-email').value.trim();
+  var pass  = document.getElementById('sa-pass').value;
+  var name  = document.getElementById('sa-name').value.trim() || 'Super Admin';
+  if (!email||!pass||pass.length<6){log('log-sa','E-mail e senha (mín. 6 chars) obrigatórios.','err');return;}
+  document.getElementById('btn-sa').disabled=true;
+  log('log-sa','Criando no Firebase Auth...','i');
+
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(function(c){
+      log('log-sa','Auth UID: '+c.user.uid,'ok');
+      log('log-sa','Gravando Firestore...','i');
+      return db.collection('users').doc(c.user.uid).set({
+        uid:c.user.uid,name:name,email:email,role:'SUPER_ADMIN',
+        tenantId:'*',clearance:100,status:'active',
+        permissions:PERMS.SUPER_ADMIN,createdAt:new Date().toISOString()
+      });
+    })
+    .then(function(){
+      log('log-sa','users/{uid} → SUPER_ADMIN · tenantId: *','ok');
+      log('log-sa','✅ Super Admin criado!','ok');
+      document.getElementById('btn-sa').disabled=false;
+    })
+    .catch(function(err){
+      document.getElementById('btn-sa').disabled=false;
+      if(err.code==='auth/email-already-in-use'){
+        log('log-sa','Usuário já existe. Atualizando perfil...','i');
+        auth.signInWithEmailAndPassword(email,pass)
+          .then(function(c){
+            return db.collection('users').doc(c.user.uid).set({
+              name:name,email:email,role:'SUPER_ADMIN',tenantId:'*',clearance:100,
+              status:'active',permissions:PERMS.SUPER_ADMIN,updatedAt:new Date().toISOString()
+            },{merge:true});
+          })
+          .then(function(){log('log-sa','✅ Perfil SUPER_ADMIN atualizado!','ok');})
+          .catch(function(e){log('log-sa','Erro: '+e.message,'err');});
+      } else {
+        log('log-sa','Erro: '+err.message,'err');
+      }
+    });
+}
+
+function createTenants() {
+  document.getElementById('btn-ten').disabled=true;
+  var tenants=[
+    {id:'VP_AGENCIA_01',name:'Viajante Pro Oficial',plan:'PRO',active:true,mrr:0,status:'active'},
+    {id:'CES_2027_BR',name:'CES Brasil 2027 Ventures S.A.',plan:'EVENT',active:true,mrr:0,status:'active'},
+    {id:'NEXIA_MASTER',name:'NEXIA Corporation',plan:'SOVEREIGN',active:true,mrr:0,status:'active'}
+  ];
+  log('log-ten','Criando '+tenants.length+' tenants...','i');
+  var batch=db.batch();
+  tenants.forEach(function(t){
+    var ref=db.collection('tenants').doc(t.id);
+    batch.set(ref,{name:t.name,plan:t.plan,active:t.active,mrr:t.mrr,status:t.status,createdAt:new Date().toISOString()},{merge:true});
+  });
+  batch.commit()
+    .then(function(){
+      tenants.forEach(function(t){log('log-ten','tenants/'+t.id+' → '+t.name+' ('+t.plan+')','ok');});
+      log('log-ten','✅ Tenants criados!','ok');
+      document.getElementById('btn-ten').disabled=false;
+    })
+    .catch(function(err){log('log-ten','Erro: '+err.message,'err');document.getElementById('btn-ten').disabled=false;});
+}
+
+function createUser() {
+  var email=document.getElementById('u-email').value.trim();
+  var pass=document.getElementById('u-pass').value;
+  var name=document.getElementById('u-name').value.trim();
+  var role=document.getElementById('u-role').value;
+  var tenant=document.getElementById('u-tenant').value;
+  if(!email||!pass||!name){log('log-usr','Preencha todos os campos.','err');return;}
+  if(pass.length<6){log('log-usr','Senha mínima: 6 caracteres.','err');return;}
+  document.getElementById('btn-usr').disabled=true;
+  log('log-usr','Criando '+email+'...','i');
+  auth.createUserWithEmailAndPassword(email,pass)
+    .then(function(c){
+      return db.collection('users').doc(c.user.uid).set({
+        uid:c.user.uid,name:name,email:email,role:role,tenantId:tenant,
+        clearance:CLEARANCE[role]||1,status:'active',
+        permissions:PERMS[role]||[],createdAt:new Date().toISOString()
+      });
+    })
+    .then(function(){
+      log('log-usr','✅ '+email+' → '+role+' ['+tenant+']','ok');
+      document.getElementById('u-email').value='';
+      document.getElementById('u-pass').value='';
+      document.getElementById('u-name').value='';
+      document.getElementById('btn-usr').disabled=false;
+    })
+    .catch(function(err){
+      document.getElementById('btn-usr').disabled=false;
+      if(err.code==='auth/email-already-in-use')log('log-usr','E-mail já existe.','err');
+      else log('log-usr','Erro: '+err.message,'err');
+    });
+}
+
+function verify() {
+  log('log-ver','Lendo Firestore...','i');
+  Promise.all([db.collection('users').get(),db.collection('tenants').get()])
+    .then(function(r){
+      log('log-ver','users/: '+r[0].size+' doc(s)','ok');
+      r[0].forEach(function(d){var x=d.data();log('log-ver','  '+x.email+' → '+x.role+' ['+x.tenantId+']','i');});
+      log('log-ver','tenants/: '+r[1].size+' doc(s)','ok');
+      r[1].forEach(function(d){var x=d.data();log('log-ver','  '+d.id+' → '+x.name+' ('+x.plan+')','i');});
+      var sa=r[0].docs.filter(function(d){return d.data().role==='SUPER_ADMIN';});
+      if(sa.length) log('log-ver','✅ SUPER_ADMIN: '+sa[0].data().email,'ok');
+      else log('log-ver','⚠️ Nenhum SUPER_ADMIN. Execute Etapa 1.','err');
+    })
+    .catch(function(err){log('log-ver','Erro: '+err.message,'err');});
+}
+</script>
+</body>
+</html>

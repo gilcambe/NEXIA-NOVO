@@ -1,0 +1,76 @@
+[build]
+  publish = "."
+  command = "echo 'Static deploy — no build step'"
+  functions = "netlify/functions"
+
+[build.processing.css]
+  bundle = false
+  minify = false
+
+[build.processing.js]
+  bundle = false
+  minify = false
+
+[build.processing.html]
+  pretty_urls = true
+
+# ── Rate Limiting (Netlify Edge) ──
+[[edge_functions]]
+  path = "/netlify/functions/*"
+  function = "rate-limiter"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(self), camera=(self), microphone=(self)"
+    Content-Security-Policy = "default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; frame-src *;"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+[[headers]]
+  for = "/core/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=3600"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/viajante-pro/sw-vp.js"
+  [headers.values]
+    Service-Worker-Allowed = "/"
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/ces/sw-ces.js"
+  [headers.values]
+    Service-Worker-Allowed = "/"
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/bezsan/sw-bezsan.js"
+  [headers.values]
+    Service-Worker-Allowed = "/"
+    Cache-Control = "no-cache"
+
+# ── Redirects de segurança ──
+[[redirects]]
+  from = "/admin"
+  to = "/nexia/nexia-master.html"
+  status = 301
+  force = false
+
+[[redirects]]
+  from = "/.env"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/*.sql"
+  to = "/404.html"
+  status = 404
