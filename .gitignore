@@ -1,16 +1,21 @@
 # Dependencies
 node_modules/
 
-# Environment
+# Environment (NUNCA commitar .env)
 .env
 .env.local
 .env.production
+.env.*.local
 
 # Editor
 .DS_Store
 .vscode/
 *.swp
+*.swo
 
 # Logs
 *.log
 npm-debug.log*
+
+# NÃO ignorar out/ — é o build pre-compilado necessário para o Render
+# out/

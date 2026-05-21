@@ -1,15 +1,39 @@
 services:
   - type: web
-    name: nexia-os-frontend
+    name: NEXIAOS
     env: node
-    buildCommand: npm install --omit=dev
+    buildCommand: npm install && npm run build
     startCommand: node server.js
     envVars:
-      - key: VITE_NEXIA_API_URL
-        value: https://nexia-os.onrender.com
-      - key: VITE_NEXIA_APP_URL
-        value: https://nexia-os.onrender.com
-      - key: NODE_VERSION
-        value: "20.x"
       - key: NODE_ENV
         value: production
+      - key: NODE_VERSION
+        value: "20.x"
+      - key: NEXIA_APP_URL
+        value: https://nexia-os.onrender.com
+      - key: FIREBASE_API_KEY
+        sync: false
+      - key: FIREBASE_AUTH_DOMAIN
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_STORAGE_BUCKET
+        sync: false
+      - key: FIREBASE_MESSAGING_SENDER_ID
+        sync: false
+      - key: FIREBASE_APP_ID
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_BASE64
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: CEREBRAS_API_KEY
+        sync: false
+      - key: MASTER_EMAIL
+        sync: false
+      - key: METRICS_SECRET
+        sync: false

@@ -4,13 +4,11 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { AppRoutes } from "./router";
 import i18n from "./i18n";
 
-declare const __BASE_PATH__: string;
-
 function App() {
   return (
     <I18nextProvider i18n={i18n}>
       <AuthProvider>
-        <BrowserRouter basename={__BASE_PATH__}>
+        <BrowserRouter basename="/">
           <AppRoutes />
         </BrowserRouter>
       </AuthProvider>
