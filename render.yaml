@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: nexia-os-frontend
+    env: node
+    buildCommand: npm install --omit=dev
+    startCommand: node server.js
+    envVars:
+      - key: VITE_NEXIA_API_URL
+        value: https://nexia-os.onrender.com
+      - key: VITE_NEXIA_APP_URL
+        value: https://nexia-os.onrender.com
+      - key: NODE_VERSION
+        value: "20.x"
+      - key: NODE_ENV
+        value: production
